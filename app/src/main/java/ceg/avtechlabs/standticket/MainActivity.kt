@@ -3,10 +3,12 @@ package ceg.avtechlabs.standticket
 import android.app.ProgressDialog
 import android.content.Intent
 import android.graphics.Bitmap
+import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
+import android.support.v4.content.FileProvider
 import android.text.Spannable
 import android.view.View
 import android.widget.ProgressBar
@@ -58,9 +60,12 @@ class MainActivity : AppCompatActivity() {
     }
     fun generateTicket(v: View) {
         //inputLayout.getDrawingCache()
-        inputLayout.isDrawingCacheEnabled = true
+        /*inputLayout.isDrawingCacheEnabled = true
         inputLayout.buildDrawingCache()
-        generatePdf(inputLayout.drawingCache)
+        generatePdf(inputLayout.drawingCache)*/
+        val drawable = qrView.drawable as BitmapDrawable
+
+        generatePdf(drawable.bitmap)
     }
 
     fun generatePdf(qrCode: Bitmap) {
@@ -79,10 +84,74 @@ class MainActivity : AppCompatActivity() {
             val root = Environment.getExternalStorageDirectory()
             try {
                 val content = PDPageContentStream(doc, page)
-                val bitmap = Bitmap.createScaledBitmap(qrCode, (qrCode.width*0.5).toInt(), (qrCode.height*0.5).toInt(), true)
-                val image = LosslessFactory.createFromImage(doc, bitmap)
-                content.drawImage(image, 20F, 20F)
+                //val bitmap = Bitmap.createScaledBitmap(qrCode, (qrCode.width*0.5).toInt(), (qrCode.height*0.5).toInt(), true)
+                //val image = LosslessFactory.createFromImage(doc, bitmap)
 
+                //val image = qrCode
+                val image = LosslessFactory.createFromImage(doc, qrCode)
+                // positioned the image at this point (0, 575) after many trial and errors
+                content.drawImage(image, 0F, 575F)
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 20f);
+                content.newLineAtOffset(200F, 700f);
+                content.showText("POLLACHI MUNICIPALITY BIKE STAND");
+                content.endText()
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 10F);
+                content.newLineAtOffset(200F, 685f);
+                content.showText("(Near Nachimuthu nursing home, Market Road, Pollachi)");
+                content.endText()
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 15F);
+                content.newLineAtOffset(200f, 678F)
+                content.showText("---------------------------------------------------------");
+                content.endText()
+                content.close()
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 12F);
+                content.newLineAtOffset(200f, 670F)
+                content.showText("DATE AND TIME: ${dateTimeView.text.toString()}");
+                content.endText()
+                content.close()
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 15F);
+                content.newLineAtOffset(200f, 655F)
+                content.showText("VEHICLE NO: ${editTextVehicleNo.text.toString()}");
+                content.endText()
+                content.close()
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 15F);
+                content.newLineAtOffset(200f, 648F)
+                content.showText("---------------------------------------------------------");
+                content.endText()
+                content.close()
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 8f);
+                content.newLineAtOffset(200f, 640F)
+                content.showText("1. If you lose this token, please produce valid ownership document to retake vehicle");
+                content.endText()
+                content.close()
+
+                content.beginText();
+                content.setNonStrokingColor(0, 0, 0);
+                content.setFont(font, 8f);
+                content.newLineAtOffset(200f, 625f)
+                content.showText("2. Don't side lock the vehicle.");
+                content.endText()
                 content.close()
 
                 val random = Random().nextInt().toString()
@@ -96,7 +165,11 @@ class MainActivity : AppCompatActivity() {
                     progress.dismiss()
 
                     val intent = Intent(Intent.ACTION_VIEW)
-                    intent.data = Uri.fromFile(File(path))
+
+                    val uri = FileProvider.getUriForFile(this,  this.applicationContext.packageName + ".provider",
+                            File(path))
+                    intent.setDataAndType(uri, "application/pdf")
+                    intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                     startActivity(intent)
                 }
 
