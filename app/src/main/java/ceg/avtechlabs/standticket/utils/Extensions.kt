@@ -1,6 +1,9 @@
 package ceg.avtechlabs.standticket.utils
 
+import android.content.Context
 import android.graphics.Bitmap
+import android.preference.Preference
+import android.preference.PreferenceManager
 import android.util.Log
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
@@ -29,4 +32,24 @@ fun getDateTime(millis: Long): String {
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = millis
     return formatter.format(calendar.time)
+}
+
+
+fun Context.shiftOpened() {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    val editor = preference.edit()
+    editor.putBoolean("close", false)
+    editor.commit()
+}
+
+fun Context.shiftClosed() {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    val editor = preference.edit()
+    editor.putBoolean("close", true)
+    editor.commit()
+}
+
+fun Context.isShiftClosed(): Boolean {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    return preference.getBoolean("close", false)
 }

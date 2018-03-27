@@ -6,24 +6,33 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.widget.Toast
 import ceg.avtechlabs.standticket.R
+import ceg.avtechlabs.standticket.db.DbHelper
 import ceg.avtechlabs.standticket.utils.getDateTime
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import kotlinx.android.synthetic.main.activity_close_ticket.*
 import kotlinx.android.synthetic.main.activity_main.*
 
 class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadListener {
-    override fun onQRCodeRead(text: String?, points: Array<out PointF>?) {
+    override fun onQRCodeRead(text: String, points: Array<out PointF>?) {
         //Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-        val date = getDateTime(text?.replace("Adhi", "").toString().toLong())
+        var token = text.replace("Adhi", "")
 
         val alert = AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_info)
                 .setTitle("Info")
-                .setMessage(date)
+                .setMessage(text)
                 .setPositiveButton("oK", null)
                 .create()
-        alert.show()
-        finish()
+        //alert.show()
+
+        Toast.makeText(this, "Token $token closed successfully", Toast.LENGTH_LONG).show()
+        Thread {
+            val db = DbHelper(this@CloseTicketActivity)
+            db.close(token)
+            db.close()
+            finish()
+        }.start()
+        //
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
