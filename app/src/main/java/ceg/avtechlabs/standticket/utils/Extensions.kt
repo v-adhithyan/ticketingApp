@@ -35,18 +35,25 @@ fun getDateTime(millis: Long): String {
 }
 
 
-fun Context.shiftOpened() {
+fun Context.openShift() {
     val preference = PreferenceManager.getDefaultSharedPreferences(this)
     val editor = preference.edit()
     editor.putBoolean("close", false)
+    editor.putBoolean("open", true)
     editor.commit()
 }
 
-fun Context.shiftClosed() {
+fun Context.closeShift() {
     val preference = PreferenceManager.getDefaultSharedPreferences(this)
     val editor = preference.edit()
     editor.putBoolean("close", true)
+    editor.putBoolean("open", false)
     editor.commit()
+}
+
+fun Context.isShiftOpen(): Boolean {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    return preference.getBoolean("open", false)
 }
 
 fun Context.isShiftClosed(): Boolean {

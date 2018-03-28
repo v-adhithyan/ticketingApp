@@ -14,22 +14,23 @@ class PinActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pin)
-        extra = intent.getStringExtra(MainActivity.START)
+        title = "Admin"
+        //extra = intent.getStringExtra(MainActivity.START)
     }
 
     fun go(v: View) {
         if(password.text.toString().equals("6672")) {
-            if(extra.equals(MainActivity.SEARCH)) {
-                val Intent = Intent(this, SearchActivity::class.java)
-                startActivity(intent)
-            } else if(extra.equals(MainActivity.CLOSE)) {
-                val Intent = Intent(this, ShiftActivity::class.java)
-                startActivity(intent)
-            } else {
-
-            }
+            startActivity(Intent(this, ShiftActivity::class.java))
+            finish()
         } else {
             Toast.makeText(this, "wrong password", Toast.LENGTH_LONG).show()
         }
+
+        finish()
     }
+
+    override fun onBackPressed() {
+        startActivity(Intent(this, MainActivity::class.java))
+    }
+
 }

@@ -12,7 +12,7 @@
         android:id="@+id/menu_close_shift"
         android:orderInCategory="101"
         app:showAsAction="never"
-        android:title="Close"/>
+        android:title="Shift"/>
 
     <item
         android:id="@+id/menu_search"

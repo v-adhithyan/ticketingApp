@@ -12,18 +12,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Open"
+        android:id="@+id/button_open_shift"
+        android:background="@color/colorAccent"
+        android:textColor="@android:color/white"
         android:onClick="setOpen"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Close"
+        android:id="@+id/button_close_shift"
+        android:background="@color/colorAccent"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="20dp"
         android:onClick="setClose"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Summary"
+        android:id="@+id/button_summary"
+        android:background="@color/colorAccent"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="20dp"
         android:onClick="summary"/>
 
 </LinearLayout>

@@ -43,6 +43,7 @@
                 android:layout_height="wrap_content"
                 android:hint="Registration No"
                 android:textColorHint="@color/colorAccent"
+                android:textAllCaps="true"
                 android:id="@+id/editTextVehicleNo"/>
 
             <View

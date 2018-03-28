@@ -17,10 +17,7 @@ import android.widget.TextView
 import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
-import ceg.avtechlabs.standticket.utils.PrinterCommands
-import ceg.avtechlabs.standticket.utils.Utils
-import ceg.avtechlabs.standticket.utils.generateQr
-import ceg.avtechlabs.standticket.utils.getDateTime
+import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import java.io.*
 import java.util.*
@@ -39,11 +36,22 @@ class MainActivity : AppCompatActivity() {
     var stopWorker = false
     val value = ""
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        if(!isShiftOpen()) {
+            buttonGenTicket.visibility = View.INVISIBLE
+        } else {
+            buttonGenTicket.visibility = View.VISIBLE
+        }
+
         reset()
+
+        progress.setTitle("Please wait")
+        progress.setMessage("Connecting with printer")
+
         enableBluetoothAndPrinterSetup()
     }
 
@@ -85,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         val address = "(Behind Nachimuthu nursing home)\n"
         val tokenNo = "TOKEN: $millis\n"
         val vechicleNo = "Vehicle Number: ${editTextVehicleNo.text.toString()}\n"
-        val dateTime = "TIME: ${dateTimeView.text.toString()}\n"
+        val dateTime = "TIME: ${getDateTime(millis)}\n"
         val instructions = ""
 
         val bitmap = Bitmap.createScaledBitmap(qrCode, (qrCode.width).toInt(), (qrCode.height).toInt(), true)
@@ -125,6 +133,7 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH)
             } else {
                 connectPrinter()
+                progress.dismiss()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -133,6 +142,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun connectPrinter() {
+        progress.show()
         val pairedDevices = bluetoothAdapter.bondedDevices
         for(d in pairedDevices) {
             if(d.name.equals("BlueTooth Printer")) {
@@ -158,6 +168,9 @@ class MainActivity : AppCompatActivity() {
             Toast.makeText(this, ex.message, Toast.LENGTH_LONG).show()
         }
 
+        if(progress.isShowing) {
+            progress.dismiss()
+        }
     }
 
     fun print() {
@@ -172,10 +185,12 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "Try again", Toast.LENGTH_LONG).show()
                 }
             }   else -> {
+
             Toast.makeText(this, "Turn on bluetooth to continue", Toast.LENGTH_LONG).show()
             }
 
         }
+
     }
 
     internal fun beginListenForData() {
@@ -254,21 +269,20 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_close_shift -> {
-                val intent = Intent(this, ShiftActivity::class.java)
-                intent.putExtra(START, CLOSE)
+                val intent = Intent(this, PinActivity::class.java)
                 startActivity(intent)
+                finish()
             }
 
             R.id.menu_search -> {
-                val intent = Intent(this, PinActivity::class.java)
-                intent.putExtra(START, SEARCH)
+                val intent = Intent(this, SearchActivity::class.java)
                 startActivity(intent)
             }
 
             R.id.menu_summary -> {
-                val intent = Intent(this, PinActivity::class.java)
-                intent.putExtra(START, SUMMARY)
-                startActivity(intent)
+                val db = DbHelper(this)
+                Toast.makeText(this, "${db.summaryEmployee()} tokens issued", Toast.LENGTH_LONG).show()
+
             }
 
             else -> {
@@ -279,10 +293,16 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    private val progress by lazy {
+        ProgressDialog(this)
+    }
+
     companion object {
         val START = "start"
         val SEARCH = "SEARCH"
         val CLOSE = "close"
         val SUMMARY = "summary"
     }
+
+
 }
