@@ -1,8 +1,10 @@
 package ceg.avtechlabs.standticket.ui
 
+import android.content.Context
 import android.graphics.PointF
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Vibrator
 import android.support.v7.app.AlertDialog
 import android.widget.Toast
 import ceg.avtechlabs.standticket.R
@@ -17,12 +19,8 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
         //Toast.makeText(this, text, Toast.LENGTH_LONG).show()
         var token = text.replace("Adhi", "")
 
-        val alert = AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_info)
-                .setTitle("Info")
-                .setMessage(text)
-                .setPositiveButton("oK", null)
-                .create()
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        vibrator.vibrate(1000)
         //alert.show()
 
         Toast.makeText(this, "Token $token closed successfully", Toast.LENGTH_LONG).show()

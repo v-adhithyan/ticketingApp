@@ -26,11 +26,11 @@ class PinActivity : AppCompatActivity() {
             Toast.makeText(this, "wrong password", Toast.LENGTH_LONG).show()
         }
 
-        finish()
     }
 
     override fun onBackPressed() {
         startActivity(Intent(this, MainActivity::class.java))
+        finish()
     }
 
 }

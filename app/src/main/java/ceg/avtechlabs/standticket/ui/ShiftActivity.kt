@@ -46,6 +46,10 @@ class ShiftActivity : AppCompatActivity() {
     fun setOpen(v: View) {
         open()
         //finish()
+        val db = DbHelper(this)
+        Thread {
+            db.removeAllClosed()
+        }.start()
 
         startActivity(Intent(this@ShiftActivity, MainActivity::class.java))
         finish()
@@ -78,12 +82,14 @@ class ShiftActivity : AppCompatActivity() {
         } else {
             val db = DbHelper(this)
             val count = db.summary()
-            Toast.makeText(this, count.toString(), Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "${count.toString()} tokens issued.", Toast.LENGTH_LONG).show()
             button_open_shift.visibility = View.VISIBLE
-
             //open()
         }
 
     }
 
+    override fun onBackPressed() {
+        startActivity(Intent(this, MainActivity::class.java))
+    }
 }

@@ -8,6 +8,7 @@ import android.bluetooth.BluetoothSocket
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.*
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -42,9 +43,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         if(!isShiftOpen()) {
+            val alert = AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Shift not opened")
+                    .setMessage("Admin should open the shift to print tickets.")
+                    .setPositiveButton("Ok", null)
+                    .create()
             buttonGenTicket.visibility = View.INVISIBLE
+            alert.show()
         } else {
             buttonGenTicket.visibility = View.VISIBLE
+            
+            enableBluetoothAndPrinterSetup()
         }
 
         reset()
@@ -52,7 +62,7 @@ class MainActivity : AppCompatActivity() {
         progress.setTitle("Please wait")
         progress.setMessage("Connecting with printer")
 
-        enableBluetoothAndPrinterSetup()
+
     }
 
 
@@ -133,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH)
             } else {
                 connectPrinter()
-                progress.dismiss()
+                //progress.dismiss()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
@@ -142,7 +152,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun connectPrinter() {
-        progress.show()
+        //progress.show()
         val pairedDevices = bluetoothAdapter.bondedDevices
         for(d in pairedDevices) {
             if(d.name.equals("BlueTooth Printer")) {
@@ -155,10 +165,20 @@ class MainActivity : AppCompatActivity() {
         val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
         socket = device?.createRfcommSocketToServiceRecord(uuid)
         socket?.connect()
+        if(socket == null) {
+            Toast.makeText(this, "Unable to find bluetooth printer. Please pair the device.", Toast.LENGTH_LONG).show()
+            return;
+            //val intent = Intent(Intent.ACTION_MAIN)
+            //intent.addCategory(Intent.CATEGORY_HOME)
+            //startActivity(intent)
+        }
         outStream = socket?.outputStream
         inStream = socket?.inputStream
         Toast.makeText(this, "Stream opened", Toast.LENGTH_LONG).show()
         beginListenForData()
+        if(progress.isShowing) {
+            progress.dismiss()
+        }
         try {
             val msg = "Adhithyan Vijayakumar\n\n\n\n"
             outStream?.write(msg.toByteArray())
@@ -166,11 +186,10 @@ class MainActivity : AppCompatActivity() {
         } catch (ex: Exception) {
             ex.printStackTrace()
             Toast.makeText(this, ex.message, Toast.LENGTH_LONG).show()
+
         }
 
-        if(progress.isShowing) {
-            progress.dismiss()
-        }
+
     }
 
     fun print() {

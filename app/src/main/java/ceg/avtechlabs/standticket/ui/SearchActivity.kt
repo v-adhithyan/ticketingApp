@@ -45,7 +45,13 @@ class SearchActivity : AppCompatActivity() {
                     val tokenNo = "Token No: ${r.id}\n"
                     val vehicle = "Vehicle No: ${r.vehicleNo}\n"
                     val dateTime = "Date and Time: ${r.dateTime}\n"
-                    val taken = "In stand: ${r.taken}"
+                    var taken = "In stand: "
+                    if(r.taken == 0) {
+                        taken = taken + "Yes"
+                    } else {
+                        taken = taken + "No"
+                    }
+
                     details[i] = "$tokenNo$vehicle$dateTime$taken"
                 }
                 setAdapter(details)

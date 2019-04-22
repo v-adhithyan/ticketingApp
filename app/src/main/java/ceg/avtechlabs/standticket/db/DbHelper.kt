@@ -51,7 +51,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
         cv.put(TAKEN, vehicleNotTaken)
 
         val db = this.writableDatabase
-        Log.e("adhi", "insert" + db.insert(TABLE_VEHICLES, null, cv))
+        //Log.e("adhi", "insert" + db.insert(TABLE_VEHICLES, null, cv))
         db.close()
     }
 
@@ -66,6 +66,13 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
         db.close()
     }
 
+    fun removeAllClosed() {
+        val db = this.writableDatabase
+        //val query = "delete from $TABLE_VEHICLES where $TAKEN = $vehicleTaken"
+        //db.rawQuery(query, null)
+        db.delete(TABLE_VEHICLES, "$TAKEN = ?", arrayOf("1") )
+        db.close()
+    }
     fun listAll(open: String, close: String) {
         val db = this.readableDatabase
     }
