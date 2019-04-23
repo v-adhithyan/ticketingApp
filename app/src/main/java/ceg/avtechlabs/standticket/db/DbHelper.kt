@@ -51,6 +51,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
         cv.put(TAKEN, vehicleNotTaken)
 
         val db = this.writableDatabase
+        db.insert(TABLE_VEHICLES, null, cv)
         //Log.e("adhi", "insert" + db.insert(TABLE_VEHICLES, null, cv))
         db.close()
     }
@@ -162,7 +163,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
         val db = this.readableDatabase
 
         val cursor = db.query(TABLE_VEHICLES, arrayOf(TOKEN_NO, VEHICLE_NO, DATE_TIME, TAKEN),
-                "$VEHICLE_NO LIKE ?", arrayOf("%$vehicleNo"), null, null, null, null)
+                "$VEHICLE_NO LIKE ?", arrayOf("%$vehicleNo%"), null, null, null, null)
 
         if(cursor == null){
             return null
