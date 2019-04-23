@@ -6,8 +6,15 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
-import android.os.*
+import android.net.Uri
+import android.os.Bundle
+import android.os.Handler
+import android.os.PersistableBundle
+import android.provider.Settings
+import android.support.v4.app.ActivityCompat
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
@@ -20,7 +27,9 @@ import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
-import java.io.*
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -36,32 +45,14 @@ class MainActivity : AppCompatActivity() {
     var readBufferPosition = 0
     var stopWorker = false
     val value = ""
-
+    val ALL_PERMISSIONS = 10000
+    val PERMISSIONS = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        if(!isShiftOpen()) {
-            val alert = AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Shift not opened")
-                    .setMessage("Admin should open the shift to print tickets.")
-                    .setPositiveButton("Ok", null)
-                    .create()
-            buttonGenTicket.visibility = View.INVISIBLE
-            alert.show()
-        } else {
-            buttonGenTicket.visibility = View.VISIBLE
-            
-            enableBluetoothAndPrinterSetup()
-        }
-
-        reset()
-
-        progress.setTitle("Please wait")
-        progress.setMessage("Connecting with printer")
-
+        checkOrAskPermissions()
 
     }
 
@@ -186,7 +177,6 @@ class MainActivity : AppCompatActivity() {
         } catch (ex: Exception) {
             ex.printStackTrace()
             Toast.makeText(this, ex.message, Toast.LENGTH_LONG).show()
-
         }
 
 
@@ -323,5 +313,62 @@ class MainActivity : AppCompatActivity() {
         val SUMMARY = "summary"
     }
 
+    fun permissionGranted(permission: String): Boolean {
+        return ContextCompat.checkSelfPermission(this@MainActivity, permission) == PackageManager.PERMISSION_GRANTED
+    }
 
+    fun checkOrAskPermissions(){
+        var permissionNotGranted = false
+        for (permission in PERMISSIONS) {
+            if (!permissionGranted(permission)) {
+                permissionNotGranted = true
+                break
+            }
+        }
+
+        if(permissionNotGranted) {
+            ActivityCompat.requestPermissions(this@MainActivity, PERMISSIONS, ALL_PERMISSIONS)
+        } else {
+            startShift()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            ALL_PERMISSIONS -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    startShift()
+                } else {
+                    Toast.makeText(this@MainActivity, "Enable permissions manually to run the app.", Toast.LENGTH_LONG).show()
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                    val uri = Uri.fromParts("package", this.packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+            } else -> { }
+        }
+    }
+
+    private fun startShift() {
+        if(!isShiftOpen()) {
+            val alert = AlertDialog.Builder(this)
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setTitle("Shift not opened")
+                    .setMessage("Admin should open the shift to print tickets.")
+                    .setPositiveButton("Ok", null)
+                    .create()
+            buttonGenTicket.visibility = View.INVISIBLE
+            alert.show()
+        } else {
+            buttonGenTicket.visibility = View.VISIBLE
+
+            enableBluetoothAndPrinterSetup()
+        }
+
+        reset()
+
+        progress.setTitle("Please wait")
+        progress.setMessage("Connecting with printer")
+    }
 }
