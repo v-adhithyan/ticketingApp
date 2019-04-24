@@ -70,10 +70,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun generateTicket(v: View) {
-
-        val millis = System.currentTimeMillis()
-        val qrCode = generateQr(millis)
-        generatePdf(millis, qrCode!!)
+        if(editTextVehicleNo.text.toString().length < 4) {
+            Toast.makeText(this, "Vehicle no should be greater than 4 characters to print ticket.", Toast.LENGTH_LONG).show()
+        } else {
+            val millis = System.currentTimeMillis()
+            val qrCode = generateQr(millis)
+            generatePdf(millis, qrCode!!)
+        }
     }
 
     fun generatePdf(millis: Long, qrCode: Bitmap) {
@@ -134,7 +137,6 @@ class MainActivity : AppCompatActivity() {
                 startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH)
             } else {
                 connectPrinter()
-                //progress.dismiss()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
