@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
     val ALL_PERMISSIONS = 10000
     val PERMISSIONS = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA)
 
+    val BT_PRINTER_TURNED_OFF = "Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button."
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -105,14 +106,25 @@ class MainActivity : AppCompatActivity() {
 
         val ticketString = "$tokenNo$vechicleNo$dateTime"
 
-        outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
-        outStream?.write(header.toByteArray())
-        outStream?.write(Utils.decodeBitmap(qrCode))
-        outStream?.write("\n".toByteArray())
-        outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
-        outStream?.write(ticketString.toByteArray())
-        outStream?.write(("\n\n\n" +
-                "").toByteArray())
+        if (outStream == null) {
+            progress.dismiss()
+            Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
+            return;
+        }
+
+        try {
+            outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
+            outStream?.write(header.toByteArray())
+            outStream?.write(Utils.decodeBitmap(qrCode))
+            outStream?.write("\n".toByteArray())
+            outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
+            outStream?.write(ticketString.toByteArray())
+            outStream?.write(("\n\n\n" +
+                    "").toByteArray())
+        } catch(ex: IOException) {
+            Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
+        }
+
         clear()
         progress.dismiss()
     }
@@ -140,12 +152,17 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
-            Toast.makeText(this, "Printer connection lost. Quit the app and open again.", Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, "Printer connection lost. Quit the app and open again.", Toast.LENGTH_LONG).show()
         }
     }
 
     fun connectPrinter() {
-        //progress.show()
+        val progress = ProgressDialog(this)
+        progress.setTitle("Connecting with printer")
+        progress.setMessage("Please wait..")
+        progress.isIndeterminate = true
+        progress.setCancelable(false)
+        progress.show()
         val pairedDevices = bluetoothAdapter.bondedDevices
         for(d in pairedDevices) {
             if(d.name.equals("BlueTooth Printer")) {
@@ -155,33 +172,38 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-        socket = device?.createRfcommSocketToServiceRecord(uuid)
-        socket?.connect()
-        if(socket == null) {
-            Toast.makeText(this, "Unable to find bluetooth printer. Please pair the device.", Toast.LENGTH_LONG).show()
-            return;
-            //val intent = Intent(Intent.ACTION_MAIN)
-            //intent.addCategory(Intent.CATEGORY_HOME)
-            //startActivity(intent)
+        if(device == null) {
+            Toast.makeText(this@MainActivity, "Unable to find BlueTooth Printer in paired devices. Please pair the printer and try again.", Toast.LENGTH_LONG).show()
+        } else {
+            val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+            socket = device?.createRfcommSocketToServiceRecord(uuid)
+            if(socket == null) {
+                progress.dismiss()
+                Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
+                return;
+            }
+            try {
+                socket?.connect()
+            } catch (ex: Exception) {
+                progress.dismiss()
+                Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
+                return;
+            }
+            outStream = socket?.outputStream
+            inStream = socket?.inputStream
+            Toast.makeText(this, "Stream opened", Toast.LENGTH_LONG).show()
+            beginListenForData()
+            try {
+                val msg = "READY.\n\n\n\n"
+                outStream?.write(msg.toByteArray())
+                Toast.makeText(this, "Connection established with printer.", Toast.LENGTH_LONG).show()
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                Toast.makeText(this, "Unable to establish connection. Quit the app and open again to reestablish connection.", Toast.LENGTH_LONG).show()
+                progress.dismiss()
+            }
         }
-        outStream = socket?.outputStream
-        inStream = socket?.inputStream
-        Toast.makeText(this, "Stream opened", Toast.LENGTH_LONG).show()
-        beginListenForData()
-        if(progress.isShowing) {
-            progress.dismiss()
-        }
-        try {
-            val msg = "Adhithyan Vijayakumar\n\n\n\n"
-            outStream?.write(msg.toByteArray())
-            Toast.makeText(this, "printed", Toast.LENGTH_LONG).show()
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            Toast.makeText(this, ex.message, Toast.LENGTH_LONG).show()
-        }
-
-
+        progress.dismiss()
     }
 
     fun print() {
@@ -372,5 +394,9 @@ class MainActivity : AppCompatActivity() {
 
         progress.setTitle("Please wait")
         progress.setMessage("Connecting with printer")
+    }
+
+    fun printerConnect(v: View) {
+        enableBluetoothAndPrinterSetup()
     }
 }
