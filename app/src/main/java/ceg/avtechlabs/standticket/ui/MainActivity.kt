@@ -140,7 +140,7 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
-            Toast.makeText(this, ex.message, Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Printer connection lost. Quit the app and open again.", Toast.LENGTH_LONG).show()
         }
     }
 
