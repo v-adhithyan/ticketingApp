@@ -47,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     val value = ""
     val ALL_PERMISSIONS = 10000
     val PERMISSIONS = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA)
+    var printerConnected = false
 
     val BT_PRINTER_TURNED_OFF = "Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button."
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -123,6 +124,7 @@ class MainActivity : AppCompatActivity() {
                     "").toByteArray())
         } catch(ex: IOException) {
             Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
+            printerConnected = false;
         }
 
         clear()
@@ -152,6 +154,7 @@ class MainActivity : AppCompatActivity() {
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
+            printerConnected = false
             //Toast.makeText(this, "Printer connection lost. Quit the app and open again.", Toast.LENGTH_LONG).show()
         }
     }
@@ -187,6 +190,7 @@ class MainActivity : AppCompatActivity() {
             } catch (ex: Exception) {
                 progress.dismiss()
                 Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
+                printerConnected = false
                 return;
             }
             outStream = socket?.outputStream
@@ -197,10 +201,12 @@ class MainActivity : AppCompatActivity() {
                 val msg = "READY.\n\n\n\n"
                 outStream?.write(msg.toByteArray())
                 Toast.makeText(this, "Connection established with printer.", Toast.LENGTH_LONG).show()
+                printerConnected = true
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 Toast.makeText(this, "Unable to establish connection. Quit the app and open again to reestablish connection.", Toast.LENGTH_LONG).show()
                 progress.dismiss()
+                printerConnected = false
             }
         }
         progress.dismiss()
@@ -275,6 +281,7 @@ class MainActivity : AppCompatActivity() {
                         }
 
                     } catch (ex: IOException) {
+                        printerConnected = false
                         stopWorker = true
                     }
 
@@ -284,6 +291,7 @@ class MainActivity : AppCompatActivity() {
             workerThread?.start()
 
         } catch (e: Exception) {
+            printerConnected = false
             e.printStackTrace()
         }
 
@@ -397,6 +405,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun printerConnect(v: View) {
-        enableBluetoothAndPrinterSetup()
+        if(!printerConnected) {
+            enableBluetoothAndPrinterSetup()
+            return
+        }
+
+        Toast.makeText(this@MainActivity, "Printer already connected.", Toast.LENGTH_LONG).show()
     }
 }
