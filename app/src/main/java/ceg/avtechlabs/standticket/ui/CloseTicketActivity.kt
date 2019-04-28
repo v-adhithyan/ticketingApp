@@ -1,5 +1,6 @@
 package ceg.avtechlabs.standticket.ui
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.PointF
 import android.support.v7.app.AppCompatActivity
@@ -16,21 +17,32 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadListener {
     override fun onQRCodeRead(text: String, points: Array<out PointF>?) {
+        qrDecoderView.setQRDecodingEnabled(false)
+
         //Toast.makeText(this, text, Toast.LENGTH_LONG).show()
         var token = text.replace("Adhi", "")
 
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(1000)
-        //alert.show()
 
         Toast.makeText(this, "Token $token closed successfully", Toast.LENGTH_LONG).show()
-        Thread {
-            val db = DbHelper(this@CloseTicketActivity)
-            db.close(token)
-            db.close()
-            finish()
-        }.start()
-        //
+        val progressBar = ProgressDialog(this)
+        progressBar.setCancelable(false)
+        progressBar.setMessage("Closing ticket ..")
+        progressBar.isIndeterminate = true
+        progressBar.setTitle("Please wait")
+        progressBar.show()
+
+        val db = DbHelper(this)
+        val ticketClosed = db.close(token)
+        progressBar.dismiss()
+        if(ticketClosed) {
+            Toast.makeText(this, "Ticket is already closed.", Toast.LENGTH_LONG).show()
+        } else {
+            Toast.makeText(this, "Ticket closed successfully.", Toast.LENGTH_LONG).show()
+        }
+
+        qrDecoderView.setQRDecodingEnabled(true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
