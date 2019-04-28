@@ -34,25 +34,32 @@ class ShiftActivity : AppCompatActivity() {
     }
 
     fun open() {
-        val db = DbHelper(this)
-        db.updateOpen(System.currentTimeMillis().toString())
-        db.updateClose("")
-        db.close()
-        Toast.makeText(this, "Shift opened", Toast.LENGTH_LONG).show()
+        val alert = AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Alert")
+                .setMessage("Do you want to open shift now ?")
+                .setNegativeButton("No", null)
+                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                    val db = DbHelper(this)
+                    db.updateOpen(System.currentTimeMillis().toString())
+                    db.updateClose("")
+                    db.close()
+                    Toast.makeText(this, "Shift opened", Toast.LENGTH_LONG).show()
 
-        openShift()
+                    openShift()
+
+                    Thread {
+                        db.removeAllClosed()
+                    }.start()
+
+                    startActivity(Intent(this@ShiftActivity, MainActivity::class.java))
+                    finish()
+                }).create()
+        alert.show()
     }
 
     fun setOpen(v: View) {
         open()
-        //finish()
-        val db = DbHelper(this)
-        Thread {
-            db.removeAllClosed()
-        }.start()
-
-        startActivity(Intent(this@ShiftActivity, MainActivity::class.java))
-        finish()
     }
 
     fun setClose(v: View) {
