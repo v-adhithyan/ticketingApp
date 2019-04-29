@@ -60,16 +60,17 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
         var db = this.readableDatabase
         val sql = "select taken from $TABLE_VEHICLES where $TOKEN_NO = '$token'"
         val resultSet = db.rawQuery(sql, null)
-        resultSet.moveToFirst()
 
-        val isTicketClosed = resultSet.getInt(0)
-        if(isTicketClosed == 0) {
-            db = this.writableDatabase
-            val cv = ContentValues()
-            cv.put(TAKEN, vehicleTaken)
-            db.update(TABLE_VEHICLES, cv, "$TOKEN_NO = ?", arrayOf(token))
-            db.close()
-            return false
+        if(resultSet.moveToFirst()) {
+            val isTicketClosed = resultSet.getInt(0)
+            if(isTicketClosed == 0) {
+                db = this.writableDatabase
+                val cv = ContentValues()
+                cv.put(TAKEN, vehicleTaken)
+                db.update(TABLE_VEHICLES, cv, "$TOKEN_NO = ?", arrayOf(token))
+                db.close()
+                return false
+            }
         }
 
         return true

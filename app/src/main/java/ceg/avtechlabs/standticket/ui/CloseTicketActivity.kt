@@ -18,29 +18,10 @@ import kotlinx.android.synthetic.main.activity_main.*
 class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadListener {
     override fun onQRCodeRead(text: String, points: Array<out PointF>?) {
         qrDecoderView.setQRDecodingEnabled(false)
-
-        //Toast.makeText(this, text, Toast.LENGTH_LONG).show()
-        var token = text.replace("Adhi", "")
-
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(1000)
 
-        Toast.makeText(this, "Token $token closed successfully", Toast.LENGTH_LONG).show()
-        val progressBar = ProgressDialog(this)
-        progressBar.setCancelable(false)
-        progressBar.setMessage("Closing ticket ..")
-        progressBar.isIndeterminate = true
-        progressBar.setTitle("Please wait")
-        progressBar.show()
-
-        val db = DbHelper(this)
-        val ticketClosed = db.close(token)
-        progressBar.dismiss()
-        if(ticketClosed) {
-            Toast.makeText(this, "Ticket is already closed.", Toast.LENGTH_LONG).show()
-        } else {
-            Toast.makeText(this, "Ticket closed successfully.", Toast.LENGTH_LONG).show()
-        }
+        closeTicket(text, this@CloseTicketActivity)
 
         qrDecoderView.setQRDecodingEnabled(true)
     }
@@ -53,5 +34,28 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
         qrDecoderView.setQRDecodingEnabled(true)
         qrDecoderView.setBackCamera()
 
+    }
+
+    companion object {
+        fun closeTicket(tokenText: String, context: Context) {
+            val token = tokenText.replace("Adhi", "")
+            val progressBar = ProgressDialog(context)
+            progressBar.setCancelable(false)
+            progressBar.setMessage("Closing ticket ..")
+            progressBar.isIndeterminate = true
+            progressBar.setTitle("Please wait")
+            progressBar.show()
+
+            val db = DbHelper(context)
+            val ticketClosed = db.close(token)
+
+            progressBar.dismiss()
+
+            if(ticketClosed) {
+                Toast.makeText(context, "Ticket is already closed.", Toast.LENGTH_LONG).show()
+            } else {
+                Toast.makeText(context, "Ticket closed successfully.", Toast.LENGTH_LONG).show()
+            }
+        }
     }
 }

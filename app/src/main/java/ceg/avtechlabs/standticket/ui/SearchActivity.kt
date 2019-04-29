@@ -6,7 +6,10 @@ import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.text.Spannable
 import android.text.SpannableStringBuilder
+import android.view.ContextMenu
+import android.view.MenuItem
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import ceg.avtechlabs.standticket.R
@@ -17,11 +20,15 @@ import java.util.*
 
 class SearchActivity : AppCompatActivity() {
 
+    val tokens = mutableListOf<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
         title = "Search"
+
+        registerForContextMenu(list_search)
     }
 
 
@@ -42,6 +49,7 @@ class SearchActivity : AppCompatActivity() {
                 val details = Array<String>(results.size, {""})
                 for(i in 0..results.size-1) {
                     val r = results.get(i)
+                    tokens.add(r.id.toString())
                     val tokenNo = "Token No: ${r.id}\n"
                     val vehicle = "Vehicle No: ${r.vehicleNo}\n"
                     val dateTime = "Date and Time: ${r.dateTime}\n"
@@ -70,5 +78,17 @@ class SearchActivity : AppCompatActivity() {
     fun setAdapter(results: Array<String>) {
         list_search.invalidate()
        list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
+    }
+
+    override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
+        super.onCreateContextMenu(menu, v, menuInfo)
+        menu?.add("Close Token")
+    }
+
+    override fun onContextItemSelected(item: MenuItem): Boolean {
+        if(item.title == "Close Token") {
+            CloseTicketActivity.closeTicket(tokens[item.itemId], this@SearchActivity)
+        }
+        return super.onContextItemSelected(item)
     }
 }
