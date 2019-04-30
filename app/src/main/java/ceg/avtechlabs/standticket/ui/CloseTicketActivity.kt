@@ -21,7 +21,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(1000)
 
-        closeTicket(text, this@CloseTicketActivity)
+        closeTicket(text, this@CloseTicketActivity, false, 0)
 
         qrDecoderView.setQRDecodingEnabled(true)
     }
@@ -37,7 +37,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
     }
 
     companion object {
-        fun closeTicket(tokenText: String, context: Context) {
+        fun closeTicket(tokenText: String, context: Context, id: Boolean, idVal: Int) {
             val token = tokenText.replace("Adhi", "")
             val progressBar = ProgressDialog(context)
             progressBar.setCancelable(false)
@@ -47,7 +47,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
             progressBar.show()
 
             val db = DbHelper(context)
-            val ticketClosed = db.close(token)
+            val ticketClosed = db.close(token, id, idVal)
 
             progressBar.dismiss()
 

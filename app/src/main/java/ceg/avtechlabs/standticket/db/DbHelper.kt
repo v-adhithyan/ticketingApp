@@ -26,9 +26,10 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
     val TABLE_OP_CL = "open_close"
     val NAME = "name"
     val VALUE = "value"
+    var sql = ""
 
     override fun onCreate(db: SQLiteDatabase?) {
-        db?.execSQL("create table $TABLE_VEHICLES ( $TOKEN_NO integer primary key," +
+        db?.execSQL("create table $TABLE_VEHICLES ( id INTEGER PRIMARY KEY AUTOINCREMENT, $TOKEN_NO integer," +
                 "$VEHICLE_NO text," +
                 "$DATE_TIME text," +
                 "$TAKEN integer" +
@@ -56,9 +57,15 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
         db.close()
     }
 
-    fun close(token: String): Boolean {
+    fun close(token: String, isId: Boolean, id: Int): Boolean {
         var db = this.readableDatabase
-        val sql = "select taken from $TABLE_VEHICLES where $TOKEN_NO = '$token'"
+
+        if(isId) {
+            sql = "select taken from $TABLE_VEHICLES where id = '$id'"
+        } else {
+            sql = "select taken from $TABLE_VEHICLES where $TOKEN_NO = '$token'"
+        }
+
         val resultSet = db.rawQuery(sql, null)
 
         if(resultSet.moveToFirst()) {
@@ -67,7 +74,11 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
                 db = this.writableDatabase
                 val cv = ContentValues()
                 cv.put(TAKEN, vehicleTaken)
-                db.update(TABLE_VEHICLES, cv, "$TOKEN_NO = ?", arrayOf(token))
+                if(isId) {
+                    db.update(TABLE_VEHICLES, cv, "id = ?", arrayOf(id.toString()))
+                } else {
+                    db.update(TABLE_VEHICLES, cv, "$TOKEN_NO = ?", arrayOf(token))
+                }
                 db.close()
                 return false
             }
@@ -75,6 +86,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
 
         return true
     }
+
 
     fun removeAllClosed() {
         val db = this.writableDatabase
@@ -171,7 +183,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
     fun searchVehicle(vehicleNo: String): LinkedList<Stand>? {
         val db = this.readableDatabase
 
-        val cursor = db.query(TABLE_VEHICLES, arrayOf(TOKEN_NO, VEHICLE_NO, DATE_TIME, TAKEN),
+        val cursor = db.query(TABLE_VEHICLES, arrayOf("id", TOKEN_NO, VEHICLE_NO, DATE_TIME, TAKEN),
                 "$VEHICLE_NO LIKE ?", arrayOf("%$vehicleNo%"), null, null, null, null)
 
         if(cursor == null){
@@ -187,13 +199,16 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
 
         do {
 
-            results.add( Stand(cursor.getInt(0),
-            cursor.getString(1),
-            cursor.getString(2),
-            cursor.getInt(3)))
+            results.add(
+                    Stand(cursor.getInt(0),
+                    cursor.getInt(1),
+                    cursor.getString(2),
+                    cursor.getString(3),
+                    cursor.getInt(4)))
 
         }while(cursor.moveToNext())
 
+        results;
         return results
     }
 }

@@ -20,7 +20,7 @@ import java.util.*
 
 class SearchActivity : AppCompatActivity() {
 
-    val tokens = mutableListOf<String>()
+    val tokens = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,8 +49,9 @@ class SearchActivity : AppCompatActivity() {
                 val details = Array<String>(results.size, {""})
                 for(i in 0..results.size-1) {
                     val r = results.get(i)
-                    tokens.add(r.id.toString())
-                    val tokenNo = "Token No: ${r.id}\n"
+                    tokens.add(r.pk)
+                    //val tokenNo = "Token No: ${r.id}\n"
+                    val tokenNo = ""
                     val vehicle = "Vehicle No: ${r.vehicleNo}\n"
                     val dateTime = "Date and Time: ${r.dateTime}\n"
                     var taken = "In stand: "
@@ -87,7 +88,10 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
         if(item.title == "Close Token") {
-            CloseTicketActivity.closeTicket(tokens[item.itemId], this@SearchActivity)
+            val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
+            val position = info.position
+            val id = tokens[position]
+            CloseTicketActivity.closeTicket("", this@SearchActivity, true, id)
         }
         return super.onContextItemSelected(item)
     }
