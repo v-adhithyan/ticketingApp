@@ -77,11 +77,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun generatePdf(millis: Long, qrCode: Bitmap) {
-        val progress = ProgressDialog(this)
-        progress.setTitle(getString(R.string.alert_title_printing))
-        progress.setMessage(getString(R.string.alert_message_please_wait))
-        progress.isIndeterminate = true
-        progress.setCancelable(false)
+        val progress = createProgressDialog(getString(R.string.alert_title_printing))
         progress.show()
 
         val thread = Thread {
@@ -151,12 +147,9 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun connectPrinter() {
-        val progress = ProgressDialog(this)
-        progress.setTitle(getString(R.string.connecting_with_printer))
-        progress.setMessage(getString(R.string.alert_message_please_wait))
-        progress.isIndeterminate = true
-        progress.setCancelable(false)
+        val progress = createProgressDialog(getString(R.string.connecting_with_printer))
         progress.show()
+
         val pairedDevices = bluetoothAdapter.bondedDevices
         for(d in pairedDevices) {
             if(d.name.equals("BlueTooth Printer")) {
@@ -317,13 +310,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-    private val progress by lazy {
-        ProgressDialog(this)
-    }
-
-    companion object {
-    }
-
     fun permissionGranted(permission: String): Boolean {
         return ContextCompat.checkSelfPermission(this@MainActivity, permission) == PackageManager.PERMISSION_GRANTED
     }
@@ -378,9 +364,6 @@ class MainActivity : AppCompatActivity() {
         }
 
         reset()
-
-        progress.setTitle(getString(R.string.alert_message_please_wait))
-        progress.setMessage(getString(R.string.connecting_with_printer))
     }
 
     fun printerConnect(v: View) {

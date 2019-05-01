@@ -8,6 +8,7 @@ import android.os.Vibrator
 import android.support.v7.app.AppCompatActivity
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
+import ceg.avtechlabs.standticket.utils.createProgressDialog
 import ceg.avtechlabs.standticket.utils.showLongToast
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import kotlinx.android.synthetic.main.activity_close_ticket.*
@@ -35,11 +36,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
     companion object {
         fun closeTicket(tokenText: String, context: Context, id: Boolean, idVal: Int) {
             val token = tokenText.replace("Adhi", "")
-            val progressBar = ProgressDialog(context)
-            progressBar.setCancelable(false)
-            progressBar.setMessage("Closing ticket ..")
-            progressBar.isIndeterminate = true
-            progressBar.setTitle(context.getString(R.string.alert_message_please_wait))
+            val progressBar = context.createProgressDialog(context.getString(R.string.closing_ticket))
             progressBar.show()
 
             val db = DbHelper(context)

@@ -11,6 +11,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
+import ceg.avtechlabs.standticket.utils.createProgressDialog
 import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_search.*
 
@@ -31,8 +32,7 @@ class SearchActivity : AppCompatActivity() {
     fun search(v: View) {
         val vehicleNo = search_vehicle_no.text.toString()
 
-        val progress = ProgressDialog(this)
-        progress.setMessage(getString(R.string.searching_vehicle))
+        val progress = createProgressDialog(getString(R.string.searching_vehicle))
         progress.show()
 
         if(vehicleNo.length > 3) {

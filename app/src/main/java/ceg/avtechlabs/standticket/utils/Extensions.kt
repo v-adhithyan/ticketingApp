@@ -1,11 +1,13 @@
 package ceg.avtechlabs.standticket.utils
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.Bitmap
 import android.preference.PreferenceManager
 import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
+import dmax.dialog.SpotsDialog
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,4 +62,14 @@ fun Context.isShiftClosed(): Boolean {
 
 fun Context.showLongToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+}
+
+fun Context.createProgressDialog(text: String): AlertDialog {
+    val dialog = SpotsDialog.Builder()
+            .setContext(this)
+            .setMessage(text)
+            .setCancelable(false)
+            .build()
+
+    return dialog
 }
