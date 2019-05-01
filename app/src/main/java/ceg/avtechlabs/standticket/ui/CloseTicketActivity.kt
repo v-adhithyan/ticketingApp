@@ -23,7 +23,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
 
         closeTicket(text, this@CloseTicketActivity, false, 0)
 
-        qrDecoderView.setQRDecodingEnabled(true)
+        //qrDecoderView.setQRDecodingEnabled(true)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

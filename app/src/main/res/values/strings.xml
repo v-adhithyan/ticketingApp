@@ -2,4 +2,25 @@
     <string name="app_name">Ticket</string>
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_shift">ShiftActivity</string>
+
+    <string name="printer_turned_off">Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button.</string>
+    <string name="toast_vehicle_4_chars">Vehicle no should be greater than 4 characters to print ticket.</string>
+    <string name="alert_title_printing">Printing</string>
+    <string name="alert_message_please_wait">Please wait ..</string>
+    <string name="connecting_with_printer">Connecting with printer</string>
+    <string name="toast_printer_found">Printer found</string>
+    <string name="toast_printer_not_in_paired_devices">Unable to find BlueTooth Printer in paired devices. Please pair the printer and try again.</string>
+    <string name="printer_connected">Connection established with printer.</string>
+    <string name="unable_to_connect_printer">Unable to establish connection. Quit the app and open again to reestablish connection.</string>
+
+    <string name="try_again">Try again</string>
+    <string name="turn_on_bluetooth">Turn on bluetooth to continue</string>
+
+    <string name="enable_permissions_manually">Enable permissions manually to run the app.</string>
+
+    <string name="alert_shift_not_opened">Shift not opened.</string>
+    <string name="admin_open_shift">Admin should open the shift to print tickets.</string>
+    <string name="positive_button">Ok</string>
+
+    <string name="printer_already_connected">Printer already connected.</string>
 </resources>

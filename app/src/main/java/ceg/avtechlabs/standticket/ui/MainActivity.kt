@@ -49,7 +49,8 @@ class MainActivity : AppCompatActivity() {
     val PERMISSIONS = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA)
     var printerConnected = false
 
-    val BT_PRINTER_TURNED_OFF = "Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button."
+    val BT_PRINTER_TURNED_OFF = getString(R.string.printer_turned_off)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -73,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     fun generateTicket(v: View) {
         if(editTextVehicleNo.text.toString().length < 4) {
-            Toast.makeText(this, "Vehicle no should be greater than 4 characters to print ticket.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_vehicle_4_chars), Toast.LENGTH_LONG).show()
         } else {
             val millis = System.currentTimeMillis()
             val qrCode = generateQr(millis)
@@ -83,8 +84,8 @@ class MainActivity : AppCompatActivity() {
 
     fun generatePdf(millis: Long, qrCode: Bitmap) {
         val progress = ProgressDialog(this)
-        progress.setTitle("Printing")
-        progress.setMessage("Please wait..")
+        progress.setTitle(getString(R.string.alert_title_printing))
+        progress.setMessage(getString(R.string.alert_message_please_wait))
         progress.isIndeterminate = true
         progress.setCancelable(false)
         progress.show()
@@ -161,8 +162,8 @@ class MainActivity : AppCompatActivity() {
 
     fun connectPrinter() {
         val progress = ProgressDialog(this)
-        progress.setTitle("Connecting with printer")
-        progress.setMessage("Please wait..")
+        progress.setTitle(getString(R.string.connecting_with_printer))
+        progress.setMessage(getString(R.string.alert_message_please_wait))
         progress.isIndeterminate = true
         progress.setCancelable(false)
         progress.show()
@@ -170,13 +171,13 @@ class MainActivity : AppCompatActivity() {
         for(d in pairedDevices) {
             if(d.name.equals("BlueTooth Printer")) {
                 device = d
-                Toast.makeText(this, "Printer found", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.toast_printer_found), Toast.LENGTH_LONG).show()
                 break
             }
         }
 
         if(device == null) {
-            Toast.makeText(this@MainActivity, "Unable to find BlueTooth Printer in paired devices. Please pair the printer and try again.", Toast.LENGTH_LONG).show()
+            Toast.makeText(this@MainActivity, getString(R.string.toast_printer_not_in_paired_devices), Toast.LENGTH_LONG).show()
         } else {
             val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
             socket = device?.createRfcommSocketToServiceRecord(uuid)
@@ -195,16 +196,16 @@ class MainActivity : AppCompatActivity() {
             }
             outStream = socket?.outputStream
             inStream = socket?.inputStream
-            Toast.makeText(this, "Stream opened", Toast.LENGTH_LONG).show()
+            //Toast.makeText(this, "Stream opened", Toast.LENGTH_LONG).show()
             beginListenForData()
             try {
                 val msg = "READY.\n\n\n\n"
                 outStream?.write(msg.toByteArray())
-                Toast.makeText(this, "Connection established with printer.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.printer_connected), Toast.LENGTH_LONG).show()
                 printerConnected = true
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                Toast.makeText(this, "Unable to establish connection. Quit the app and open again to reestablish connection.", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, getString(R.string.unable_to_connect_printer), Toast.LENGTH_LONG).show()
                 progress.dismiss()
                 printerConnected = false
             }
@@ -221,11 +222,11 @@ class MainActivity : AppCompatActivity() {
             ENABLE_BLUETOOTH -> {
                 if(resultCode == Activity.RESULT_OK) { connectPrinter()
                 } else {
-                    Toast.makeText(this, "Try again", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.try_again), Toast.LENGTH_LONG).show()
                 }
             }   else -> {
 
-            Toast.makeText(this, "Turn on bluetooth to continue", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.turn_on_bluetooth), Toast.LENGTH_LONG).show()
             }
 
         }
@@ -371,7 +372,7 @@ class MainActivity : AppCompatActivity() {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     startShift()
                 } else {
-                    Toast.makeText(this@MainActivity, "Enable permissions manually to run the app.", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this@MainActivity, getString(R.string.enable_permissions_manually), Toast.LENGTH_LONG).show()
                     val intent = Intent()
                     intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     val uri = Uri.fromParts("package", this.packageName, null)
@@ -386,9 +387,9 @@ class MainActivity : AppCompatActivity() {
         if(!isShiftOpen()) {
             val alert = AlertDialog.Builder(this)
                     .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Shift not opened")
-                    .setMessage("Admin should open the shift to print tickets.")
-                    .setPositiveButton("Ok", null)
+                    .setTitle(getString(R.string.alert_shift_not_opened))
+                    .setMessage(getString(R.string.admin_open_shift))
+                    .setPositiveButton(getString(R.string.positive_button), null)
                     .create()
             buttonGenTicket.visibility = View.INVISIBLE
             alert.show()
@@ -400,8 +401,8 @@ class MainActivity : AppCompatActivity() {
 
         reset()
 
-        progress.setTitle("Please wait")
-        progress.setMessage("Connecting with printer")
+        progress.setTitle(getString(R.string.alert_message_please_wait))
+        progress.setMessage(getString(R.string.connecting_with_printer))
     }
 
     fun printerConnect(v: View) {
@@ -410,6 +411,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        Toast.makeText(this@MainActivity, "Printer already connected.", Toast.LENGTH_LONG).show()
+        Toast.makeText(this@MainActivity, getString(R.string.printer_already_connected), Toast.LENGTH_LONG).show()
     }
 }
