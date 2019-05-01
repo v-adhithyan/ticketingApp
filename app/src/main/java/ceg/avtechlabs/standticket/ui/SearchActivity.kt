@@ -26,7 +26,7 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        title = "Search"
+        title = getString(R.string.title_search)
 
         registerForContextMenu(list_search)
     }
@@ -36,7 +36,7 @@ class SearchActivity : AppCompatActivity() {
         val vehicleNo = search_vehicle_no.text.toString()
 
         val progress = ProgressDialog(this)
-        progress.setMessage("Searching for vehicle..")
+        progress.setMessage(getString(R.string.searching_vehicle))
         progress.show()
 
         if(vehicleNo.length > 3) {
@@ -44,7 +44,7 @@ class SearchActivity : AppCompatActivity() {
             val results = db.searchVehicle(vehicleNo)
 
             if(results == null) {
-                setAdapter(arrayOf("No such vehicle found"))
+                setAdapter(arrayOf(getString(R.string.vehicle_not_found)))
             } else {
                 val details = Array<String>(results.size, {""})
                 for(i in 0..results.size-1) {
@@ -52,9 +52,9 @@ class SearchActivity : AppCompatActivity() {
                     tokens.add(r.pk)
                     //val tokenNo = "Token No: ${r.id}\n"
                     val tokenNo = ""
-                    val vehicle = "Vehicle No: ${r.vehicleNo}\n"
-                    val dateTime = "Date and Time: ${r.dateTime}\n"
-                    var taken = "In stand: "
+                    val vehicle ="${getString(R.string.vehicle_no)}: ${r.vehicleNo}\n"
+                    val dateTime = "${getString(R.string.date_and_time)}: ${r.dateTime}\n"
+                    var taken = "${getString(R.string.is_in_stand)}: "
                     if(r.taken == 0) {
                         taken = taken + "Yes"
                     } else {
@@ -68,7 +68,7 @@ class SearchActivity : AppCompatActivity() {
 
         } else {
             search_vehicle_no.text = SpannableStringBuilder("")
-            Toast.makeText(this, "Vehicle no should have 4 digits", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.toast_vehicle_4_chars), Toast.LENGTH_LONG).show()
         }
 
         if(progress.isShowing) {
@@ -83,11 +83,11 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        menu?.add("Close Token")
+        menu?.add(getString(R.string.close_token_option))
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        if(item.title == "Close Token") {
+        if(item.title == getString(R.string.close_token_option)) {
             val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
             val position = info.position
             val id = tokens[position]

@@ -23,7 +23,7 @@ class PinActivity : AppCompatActivity() {
             startActivity(Intent(this, ShiftActivity::class.java))
             finish()
         } else {
-            Toast.makeText(this, "wrong password", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.wrong_password), Toast.LENGTH_LONG).show()
         }
 
     }

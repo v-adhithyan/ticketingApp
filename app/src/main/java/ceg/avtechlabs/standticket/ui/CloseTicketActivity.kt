@@ -43,7 +43,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
             progressBar.setCancelable(false)
             progressBar.setMessage("Closing ticket ..")
             progressBar.isIndeterminate = true
-            progressBar.setTitle("Please wait")
+            progressBar.setTitle(context.getString(R.string.alert_message_please_wait))
             progressBar.show()
 
             val db = DbHelper(context)
@@ -52,9 +52,9 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
             progressBar.dismiss()
 
             if(ticketClosed) {
-                Toast.makeText(context, "Ticket is already closed.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.ticket_already_closed), Toast.LENGTH_LONG).show()
             } else {
-                Toast.makeText(context, "Ticket closed successfully.", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.ticket_closed_successfully), Toast.LENGTH_LONG).show()
             }
         }
     }

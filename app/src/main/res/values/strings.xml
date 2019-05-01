@@ -23,4 +23,30 @@
     <string name="positive_button">Ok</string>
 
     <string name="printer_already_connected">Printer already connected.</string>
+
+    <string name="closing_ticket">Closing ticket..</string>
+    <string name="ticket_already_closed">Ticket is already closed.</string>
+    <string name="ticket_closed_successfully">Ticket closed successfully.</string>
+
+    <string name="wrong_password">Wrong password</string>
+
+    <string name="title_search">Search</string>
+    <string name="searching_vehicle">Searching for vehicle..</string>
+    <string name="vehicle_not_found">No such vehicle found</string>
+
+    <string name="date_and_time">Date and Time</string>
+    <string name="vehicle_no">Vehicle No</string>
+    <string name="is_in_stand">In stand</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+
+    <string name="close_token_option">Close Token</string>
+
+    <string name="title_open_close_shift">Open / Close shift</string>
+    <string name="alert_title">Alert</string>
+    <string name="confirm_open_shift_now">Do you want to open shift now ?</string>
+    <string name="shift_opened">Shift opened</string>
+    <string name="confirm_close_shift_now">Do you want to close the shift?</string>
+    <string name="shift_closed">Shift closed</string>
+    <string name="close_shift_to_view_summary">Close shift to view summary</string>
 </resources>

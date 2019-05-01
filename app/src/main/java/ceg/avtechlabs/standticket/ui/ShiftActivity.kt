@@ -23,7 +23,7 @@ class ShiftActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_shift)
 
-        title = "Open / Close shift"
+        title = getString(R.string.title_open_close_shift)
         if(!isShiftOpen()) {
             button_close_shift.visibility = View.INVISIBLE
             button_summary.visibility = View.INVISIBLE
@@ -36,15 +36,15 @@ class ShiftActivity : AppCompatActivity() {
     fun open() {
         val alert = AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Alert")
-                .setMessage("Do you want to open shift now ?")
-                .setNegativeButton("No", null)
-                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                .setTitle(getString(R.string.alert_title))
+                .setMessage(getString(R.string.confirm_open_shift_now))
+                .setNegativeButton(getString(R.string.no), null)
+                .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialogInterface, i ->
                     val db = DbHelper(this)
                     db.updateOpen(System.currentTimeMillis().toString())
                     db.updateClose("")
                     db.close()
-                    Toast.makeText(this, "Shift opened", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.shift_opened), Toast.LENGTH_LONG).show()
 
                     openShift()
 
@@ -65,14 +65,14 @@ class ShiftActivity : AppCompatActivity() {
     fun setClose(v: View) {
         val alert = AlertDialog.Builder(this)
                 .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Alert")
-                .setMessage("Do you want to close the shift?")
-                .setNegativeButton("No", null)
-                .setPositiveButton("Yes", DialogInterface.OnClickListener { dialogInterface, i ->
+                .setTitle(getString(R.string.alert_title))
+                .setMessage(getString(R.string.confirm_close_shift_now))
+                .setNegativeButton(getString(R.string.no), null)
+                .setPositiveButton(getString(R.string.yes), DialogInterface.OnClickListener { dialogInterface, i ->
                     val db = DbHelper(this@ShiftActivity)
                     db.updateClose(System.currentTimeMillis().toString())
                     db.close()
-                    Toast.makeText(this, "Shift closed", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this, getString(R.string.shift_closed), Toast.LENGTH_LONG).show()
                     closeShift()
 
                     button_close_shift.visibility = View.INVISIBLE
@@ -85,7 +85,7 @@ class ShiftActivity : AppCompatActivity() {
 
     fun summary(v: View) {
         if(!isShiftClosed()) {
-            Toast.makeText(this, "Close shift to view summary", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, getString(R.string.close_shift_to_view_summary), Toast.LENGTH_LONG).show()
         } else {
             val db = DbHelper(this)
             val count = db.summary()
