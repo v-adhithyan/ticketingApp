@@ -2,9 +2,7 @@ package ceg.avtechlabs.standticket.ui
 
 import android.app.ProgressDialog
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.ContextMenu
 import android.view.MenuItem
@@ -14,13 +12,11 @@ import android.widget.ArrayAdapter
 import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
-
 import kotlinx.android.synthetic.main.activity_search.*
-import java.util.*
 
 class SearchActivity : AppCompatActivity() {
 
-    val tokens = mutableListOf<Int>()
+    private val tokens = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +42,7 @@ class SearchActivity : AppCompatActivity() {
             if(results == null) {
                 setAdapter(arrayOf(getString(R.string.vehicle_not_found)))
             } else {
-                val details = Array<String>(results.size, {""})
+                val details = Array(results.size, {""})
                 for(i in 0..results.size-1) {
                     val r = results.get(i)
                     tokens.add(r.pk)
@@ -78,7 +74,7 @@ class SearchActivity : AppCompatActivity() {
 
     fun setAdapter(results: Array<String>) {
         list_search.invalidate()
-       list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
+        list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {

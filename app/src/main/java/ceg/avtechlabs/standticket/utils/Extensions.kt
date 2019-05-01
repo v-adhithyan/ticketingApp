@@ -2,9 +2,7 @@ package ceg.avtechlabs.standticket.utils
 
 import android.content.Context
 import android.graphics.Bitmap
-import android.preference.Preference
 import android.preference.PreferenceManager
-import android.util.Log
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
 import java.text.SimpleDateFormat
@@ -15,7 +13,6 @@ import java.util.*
  */
 
 fun generateQr(time: Long): Bitmap? {
-    //QRGEncoder()
     val qrEncoder = QRGEncoder("Adhi" + time.toString(), null, QRGContents.Type.TEXT, 200)
 
     try {
@@ -33,7 +30,6 @@ fun getDateTime(millis: Long): String {
     calendar.timeInMillis = millis
     return formatter.format(calendar.time)
 }
-
 
 fun Context.openShift() {
     val preference = PreferenceManager.getDefaultSharedPreferences(this)

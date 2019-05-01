@@ -3,7 +3,6 @@ package ceg.avtechlabs.standticket.ui
 import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
@@ -14,7 +13,6 @@ import ceg.avtechlabs.standticket.utils.closeShift
 import ceg.avtechlabs.standticket.utils.isShiftClosed
 import ceg.avtechlabs.standticket.utils.isShiftOpen
 import ceg.avtechlabs.standticket.utils.openShift
-
 import kotlinx.android.synthetic.main.activity_shift.*
 
 class ShiftActivity : AppCompatActivity() {
@@ -24,13 +22,13 @@ class ShiftActivity : AppCompatActivity() {
         setContentView(R.layout.activity_shift)
 
         title = getString(R.string.title_open_close_shift)
+
         if(!isShiftOpen()) {
             button_close_shift.visibility = View.INVISIBLE
             button_summary.visibility = View.INVISIBLE
         } else {
             button_open_shift.visibility = View.INVISIBLE
         }
-
     }
 
     fun open() {
@@ -74,9 +72,7 @@ class ShiftActivity : AppCompatActivity() {
                     db.close()
                     Toast.makeText(this, getString(R.string.shift_closed), Toast.LENGTH_LONG).show()
                     closeShift()
-
                     button_close_shift.visibility = View.INVISIBLE
-                    //open()
                 })
                 .create()
         alert.show()
@@ -91,7 +87,6 @@ class ShiftActivity : AppCompatActivity() {
             val count = db.summary()
             Toast.makeText(this, "${count.toString()} tokens issued.", Toast.LENGTH_LONG).show()
             button_open_shift.visibility = View.VISIBLE
-            //open()
         }
 
     }

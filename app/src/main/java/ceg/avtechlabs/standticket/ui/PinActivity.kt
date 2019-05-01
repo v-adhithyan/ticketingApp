@@ -1,8 +1,8 @@
 package ceg.avtechlabs.standticket.ui
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Toast
 import ceg.avtechlabs.standticket.R
@@ -10,12 +10,10 @@ import kotlinx.android.synthetic.main.activity_pin.*
 
 class PinActivity : AppCompatActivity() {
 
-    var extra = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pin)
         title = "Admin"
-        //extra = intent.getStringExtra(MainActivity.START)
     }
 
     fun go(v: View) {
@@ -25,7 +23,6 @@ class PinActivity : AppCompatActivity() {
         } else {
             Toast.makeText(this, getString(R.string.wrong_password), Toast.LENGTH_LONG).show()
         }
-
     }
 
     override fun onBackPressed() {

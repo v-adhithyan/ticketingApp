@@ -5,11 +5,11 @@ package ceg.avtechlabs.standticket.utils;
  */
 
 
-        import android.graphics.Bitmap;
-        import android.util.Log;
+import android.graphics.Bitmap;
+import android.util.Log;
 
-        import java.util.ArrayList;
-        import java.util.List;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Utils {
     // UNICODE 0x23 = #
