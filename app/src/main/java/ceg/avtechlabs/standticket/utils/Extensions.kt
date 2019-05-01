@@ -3,6 +3,7 @@ package ceg.avtechlabs.standticket.utils
 import android.content.Context
 import android.graphics.Bitmap
 import android.preference.PreferenceManager
+import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
 import java.text.SimpleDateFormat
@@ -55,4 +56,8 @@ fun Context.isShiftOpen(): Boolean {
 fun Context.isShiftClosed(): Boolean {
     val preference = PreferenceManager.getDefaultSharedPreferences(this)
     return preference.getBoolean("close", false)
+}
+
+fun Context.showLongToast(text: String) {
+    Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 }

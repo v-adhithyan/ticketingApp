@@ -9,9 +9,9 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
+import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_search.*
 
 class SearchActivity : AppCompatActivity() {
@@ -64,7 +64,7 @@ class SearchActivity : AppCompatActivity() {
 
         } else {
             search_vehicle_no.text = SpannableStringBuilder("")
-            Toast.makeText(this, getString(R.string.toast_vehicle_4_chars), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.toast_vehicle_4_chars))
         }
 
         if(progress.isShowing) {

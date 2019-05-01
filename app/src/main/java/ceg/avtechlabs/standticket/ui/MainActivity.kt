@@ -22,7 +22,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
 import ceg.avtechlabs.standticket.utils.*
@@ -69,7 +68,7 @@ class MainActivity : AppCompatActivity() {
 
     fun generateTicket(v: View) {
         if(editTextVehicleNo.text.toString().length < 4) {
-            Toast.makeText(this, getString(R.string.toast_vehicle_4_chars), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.toast_vehicle_4_chars))
         } else {
             val millis = System.currentTimeMillis()
             val qrCode = generateQr(millis)
@@ -101,7 +100,7 @@ class MainActivity : AppCompatActivity() {
 
         if (outStream == null) {
             progress.dismiss()
-            Toast.makeText(this@MainActivity, getString(R.string.printer_turned_off), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.printer_turned_off))
             return;
         }
 
@@ -115,7 +114,7 @@ class MainActivity : AppCompatActivity() {
             outStream?.write(("\n\n\n" +
                     "").toByteArray())
         } catch(ex: IOException) {
-            Toast.makeText(this@MainActivity, getString(R.string.printer_turned_off), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.printer_turned_off))
             printerConnected = false;
         }
 
@@ -147,7 +146,7 @@ class MainActivity : AppCompatActivity() {
         } catch (ex: Exception) {
             ex.printStackTrace()
             printerConnected = false
-            Toast.makeText(this, getString(R.string.printer_turned_off), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.printer_turned_off))
         }
     }
 
@@ -162,26 +161,26 @@ class MainActivity : AppCompatActivity() {
         for(d in pairedDevices) {
             if(d.name.equals("BlueTooth Printer")) {
                 device = d
-                Toast.makeText(this, getString(R.string.toast_printer_found), Toast.LENGTH_LONG).show()
+                showLongToast(getString(R.string.toast_printer_found))
                 break
             }
         }
 
         if(device == null) {
-            Toast.makeText(this@MainActivity, getString(R.string.toast_printer_not_in_paired_devices), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.toast_printer_not_in_paired_devices))
         } else {
             val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
             socket = device?.createRfcommSocketToServiceRecord(uuid)
             if(socket == null) {
                 progress.dismiss()
-                Toast.makeText(this@MainActivity, getString(R.string.printer_turned_off), Toast.LENGTH_LONG).show()
+                showLongToast(getString(R.string.printer_turned_off))
                 return;
             }
             try {
                 socket?.connect()
             } catch (ex: Exception) {
                 progress.dismiss()
-                Toast.makeText(this@MainActivity, getString(R.string.printer_turned_off), Toast.LENGTH_LONG).show()
+                showLongToast(getString(R.string.printer_turned_off))
                 printerConnected = false
                 return;
             }
@@ -191,11 +190,11 @@ class MainActivity : AppCompatActivity() {
             try {
                 val msg = "READY."
                 outStream?.write(msg.toByteArray())
-                Toast.makeText(this, getString(R.string.printer_connected), Toast.LENGTH_LONG).show()
+                showLongToast(getString(R.string.printer_connected))
                 printerConnected = true
             } catch (ex: Exception) {
                 ex.printStackTrace()
-                Toast.makeText(this, getString(R.string.unable_to_connect_printer), Toast.LENGTH_LONG).show()
+                showLongToast(getString(R.string.unable_to_connect_printer))
                 progress.dismiss()
                 printerConnected = false
             }
@@ -208,10 +207,10 @@ class MainActivity : AppCompatActivity() {
             ENABLE_BLUETOOTH -> {
                 if(resultCode == Activity.RESULT_OK) { connectPrinter()
                 } else {
-                    Toast.makeText(this, getString(R.string.try_again), Toast.LENGTH_LONG).show()
+                    showLongToast(getString(R.string.try_again))
                 }
             }   else -> {
-                Toast.makeText(this, getString(R.string.turn_on_bluetooth), Toast.LENGTH_LONG).show()
+                showLongToast(getString(R.string.turn_on_bluetooth))
             }
         }
     }
@@ -306,7 +305,7 @@ class MainActivity : AppCompatActivity() {
 
             R.id.menu_summary -> {
                 val db = DbHelper(this)
-                Toast.makeText(this, "${db.summaryEmployee()} tokens issued", Toast.LENGTH_LONG).show()
+                showLongToast("${db.summaryEmployee()} tokens issued")
 
             }
 
@@ -351,7 +350,7 @@ class MainActivity : AppCompatActivity() {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     startShift()
                 } else {
-                    Toast.makeText(this@MainActivity, getString(R.string.enable_permissions_manually), Toast.LENGTH_LONG).show()
+                    showLongToast(getString(R.string.enable_permissions_manually))
                     val intent = Intent()
                     intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                     val uri = Uri.fromParts("package", this.packageName, null)
@@ -390,6 +389,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        Toast.makeText(this@MainActivity, getString(R.string.printer_already_connected), Toast.LENGTH_LONG).show()
+        showLongToast(getString(R.string.printer_already_connected))
     }
 }

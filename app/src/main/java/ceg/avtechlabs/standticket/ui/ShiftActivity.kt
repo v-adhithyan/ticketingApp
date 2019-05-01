@@ -6,13 +6,9 @@ import android.os.Bundle
 import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
-import ceg.avtechlabs.standticket.utils.closeShift
-import ceg.avtechlabs.standticket.utils.isShiftClosed
-import ceg.avtechlabs.standticket.utils.isShiftOpen
-import ceg.avtechlabs.standticket.utils.openShift
+import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_shift.*
 
 class ShiftActivity : AppCompatActivity() {
@@ -42,7 +38,7 @@ class ShiftActivity : AppCompatActivity() {
                     db.updateOpen(System.currentTimeMillis().toString())
                     db.updateClose("")
                     db.close()
-                    Toast.makeText(this, getString(R.string.shift_opened), Toast.LENGTH_LONG).show()
+                    showLongToast(getString(R.string.shift_opened))
 
                     openShift()
 
@@ -70,7 +66,7 @@ class ShiftActivity : AppCompatActivity() {
                     val db = DbHelper(this@ShiftActivity)
                     db.updateClose(System.currentTimeMillis().toString())
                     db.close()
-                    Toast.makeText(this, getString(R.string.shift_closed), Toast.LENGTH_LONG).show()
+                    showLongToast(getString(R.string.shift_closed))
                     closeShift()
                     button_close_shift.visibility = View.INVISIBLE
                 })
@@ -81,11 +77,11 @@ class ShiftActivity : AppCompatActivity() {
 
     fun summary(v: View) {
         if(!isShiftClosed()) {
-            Toast.makeText(this, getString(R.string.close_shift_to_view_summary), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.close_shift_to_view_summary))
         } else {
             val db = DbHelper(this)
             val count = db.summary()
-            Toast.makeText(this, "${count.toString()} tokens issued.", Toast.LENGTH_LONG).show()
+            showLongToast("${count.toString()} tokens issued.")
             button_open_shift.visibility = View.VISIBLE
         }
 

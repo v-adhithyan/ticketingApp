@@ -6,9 +6,9 @@ import android.graphics.PointF
 import android.os.Bundle
 import android.os.Vibrator
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
+import ceg.avtechlabs.standticket.utils.showLongToast
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import kotlinx.android.synthetic.main.activity_close_ticket.*
 
@@ -48,9 +48,9 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
             progressBar.dismiss()
 
             if(ticketClosed) {
-                Toast.makeText(context, context.getString(R.string.ticket_already_closed), Toast.LENGTH_LONG).show()
+                context.showLongToast(context.getString(R.string.ticket_already_closed))
             } else {
-                Toast.makeText(context, context.getString(R.string.ticket_closed_successfully), Toast.LENGTH_LONG).show()
+                context.showLongToast(context.getString(R.string.ticket_closed_successfully))
             }
         }
     }

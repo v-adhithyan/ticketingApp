@@ -4,8 +4,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.Toast
 import ceg.avtechlabs.standticket.R
+import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_pin.*
 
 class PinActivity : AppCompatActivity() {
@@ -21,7 +21,7 @@ class PinActivity : AppCompatActivity() {
             startActivity(Intent(this, ShiftActivity::class.java))
             finish()
         } else {
-            Toast.makeText(this, getString(R.string.wrong_password), Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.wrong_password))
         }
     }
 
