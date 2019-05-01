@@ -53,12 +53,11 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
 
         val db = this.writableDatabase
         db.insert(TABLE_VEHICLES, null, cv)
-        //Log.e("adhi", "insert" + db.insert(TABLE_VEHICLES, null, cv))
         db.close()
     }
 
     fun close(token: String, isId: Boolean, id: Int): Boolean {
-        var db = this.readableDatabase
+        var readableDb = this.readableDatabase
 
         if(isId) {
             sql = "select taken from $TABLE_VEHICLES where id = '$id'"
@@ -66,12 +65,12 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
             sql = "select taken from $TABLE_VEHICLES where $TOKEN_NO = '$token'"
         }
 
-        val resultSet = db.rawQuery(sql, null)
+        val resultSet = readableDb.rawQuery(sql, null)
 
         if(resultSet.moveToFirst()) {
             val isTicketClosed = resultSet.getInt(0)
             if(isTicketClosed == 0) {
-                db = this.writableDatabase
+                val db = this.writableDatabase
                 val cv = ContentValues()
                 cv.put(TAKEN, vehicleTaken)
                 if(isId) {
@@ -79,105 +78,78 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
                 } else {
                     db.update(TABLE_VEHICLES, cv, "$TOKEN_NO = ?", arrayOf(token))
                 }
+                readableDb.close()
                 db.close()
                 return false
             }
         }
 
+        readableDb.close()
         return true
     }
 
 
     fun removeAllClosed() {
         val db = this.writableDatabase
-        //val query = "delete from $TABLE_VEHICLES where $TAKEN = $vehicleTaken"
-        //db.rawQuery(query, null)
         db.delete(TABLE_VEHICLES, "$TAKEN = ?", arrayOf("1") )
         db.close()
     }
-    fun listAll(open: String, close: String) {
-        val db = this.readableDatabase
-    }
 
-    fun listAll(open: String) {
+    private fun updateOpenClose(value: String, whereClause: String) {
+        val db = this.writableDatabase
+        val cv = ContentValues()
+        cv.put(VALUE, value)
 
-    }
-
-    fun search(vehicleNo: String) {
-
+        db.update(TABLE_OP_CL, cv, "$NAME = ?", arrayOf(whereClause))
+        db.close()
     }
 
     fun updateOpen(value: String) {
-        val db = this.writableDatabase
-        val cv = ContentValues()
-        cv.put(VALUE, value)
-
-        db.update(TABLE_OP_CL, cv, "$NAME = ?", arrayOf("open"))
+        updateOpenClose(value, "open")
     }
 
     fun updateClose(value: String) {
-        val db = this.writableDatabase
-        val cv = ContentValues()
-        cv.put(VALUE, value)
+        updateOpenClose(value, "close")
+    }
 
-        db.update(TABLE_OP_CL, cv, "$NAME = ?", arrayOf("close"))
+    private fun getOpenClose(selection: String): String {
+        val db = this.readableDatabase
+
+        val cursor = db.query(TABLE_OP_CL, arrayOf(VALUE), "$NAME = ?", arrayOf(selection), null, null, null, null)
+
+        if(cursor != null) {
+            cursor.moveToFirst()
+            return cursor.getString(cursor.getColumnIndex(VALUE))
+        }
+
+        return ""
     }
 
     fun getOpen(): String {
-        val db = this.readableDatabase
-
-        val cursor = db.query(TABLE_OP_CL, arrayOf(VALUE), "$NAME = ?", arrayOf("open"), null, null, null, null)
-
-        if(cursor != null) {
-            cursor.moveToFirst()
-            return cursor.getString(cursor.getColumnIndex(VALUE))
-        } else {
-            return ""
-        }
+        return getOpenClose("open")
     }
 
     fun getClose(): String {
+        return getOpenClose("close")
+    }
+
+    fun summaryHelper(sql: String): String {
         val db = this.readableDatabase
-
-        val cursor = db.query(TABLE_OP_CL, arrayOf(VALUE), "$NAME = ?", arrayOf("close"), null, null, null, null)
-
-        if(cursor != null) {
+        val cursor = db.rawQuery(sql,null)
+        if(cursor != null){
             cursor.moveToFirst()
-            return cursor.getString(cursor.getColumnIndex(VALUE))
-        } else {
-            return ""
+            return cursor.getString(0)
         }
 
+        return "0"
     }
 
     fun summary(): String? {
-        val open = getOpen().toString()
-        val close = getClose().toString()
-
-        Log.e("adhi", open)
-        Log.e("adhi", close)
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT count(*) from $TABLE_VEHICLES where $TOKEN_NO between ${open.toLong()} and  ${close.toLong()}",null)
-        if(cursor != null){
-            cursor.moveToFirst()
-            return cursor.getString(0)
-        } else {
-            return "0"
-        }
-
-        //return count.toString()
+        return summaryHelper("SELECT count(*) from $TABLE_VEHICLES where $TOKEN_NO between ${getOpen()} and  ${getClose()}")
     }
 
     fun summaryEmployee(): String? {
-        val open = getOpen().toString()
-        val db = this.readableDatabase
-        val cursor = db.rawQuery("SELECT count(*) from $TABLE_VEHICLES where $TOKEN_NO > ${open}",null)
-        if(cursor != null){
-            cursor.moveToFirst()
-            return cursor.getString(0)
-        } else {
-            return "0"
-        }
+        return summaryHelper("SELECT count(*) from $TABLE_VEHICLES where $TOKEN_NO > ${getOpen()}")
     }
 
     fun searchVehicle(vehicleNo: String): LinkedList<Stand>? {
@@ -196,9 +168,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
 
         cursor.moveToFirst()
         val results = LinkedList<Stand>()
-
         do {
-
             results.add(
                     Stand(cursor.getInt(0),
                     cursor.getInt(1),
@@ -206,9 +176,9 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAME, nu
                     cursor.getString(3),
                     cursor.getInt(4)))
 
-        }while(cursor.moveToNext())
+        } while(cursor.moveToNext())
 
-        results;
         return results
     }
+
 }
