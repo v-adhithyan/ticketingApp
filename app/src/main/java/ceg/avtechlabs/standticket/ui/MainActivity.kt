@@ -27,6 +27,7 @@ import ceg.avtechlabs.standticket.db.DbHelper
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -87,36 +88,44 @@ class MainActivity : AppCompatActivity() {
         }
         thread.start()
 
-        val standName = "POLLACHI MUNICIPALITY\nTWO WHEELER PARKING\n"
-        val address = "(Behind Nachimuthu nursing home)\n"
-        val tokenNo = "TOKEN: $millis\n"
-        val vechicleNo = "Vehicle Number: ${editTextVehicleNo.text.toString()}\n"
-        val dateTime = "TIME: ${getDateTime(millis)}\n"
-        val header = "$standName$address"
-        val ticketString = "$tokenNo$vechicleNo$dateTime"
+        doAsync {
+            val standName = "POLLACHI MUNICIPALITY\nTWO WHEELER PARKING\n"
+            val address = "(Behind Nachimuthu nursing home)\n"
+            val tokenNo = "TOKEN: $millis\n"
+            val vechicleNo = "Vehicle Number: ${editTextVehicleNo.text.toString()}\n"
+            val dateTime = "TIME: ${getDateTime(millis)}\n"
+            val header = "$standName$address"
+            val ticketString = "$tokenNo$vechicleNo$dateTime"
 
-        if (outStream == null) {
-            progress.dismiss()
-            showLongToast(getString(R.string.printer_turned_off))
-            return;
+            if (outStream == null) {
+                runOnUiThread {
+                    progress.dismiss()
+                    toast(getString(R.string.printer_turned_off))
+                }
+                return@doAsync;
+            }
+
+            try {
+                outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
+                outStream?.write(header.toByteArray())
+                outStream?.write(Utils.decodeBitmap(qrCode))
+                outStream?.write("\n".toByteArray())
+                outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
+                outStream?.write(ticketString.toByteArray())
+                outStream?.write(("\n\n\n" +
+                        "").toByteArray())
+            } catch(ex: IOException) {
+                runOnUiThread {
+                    toast(getString(R.string.printer_turned_off))
+                    printerConnected = false;
+                }
+            } finally {
+                runOnUiThread {
+                    clear()
+                    progress.dismiss()
+                }
+            }
         }
-
-        try {
-            outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
-            outStream?.write(header.toByteArray())
-            outStream?.write(Utils.decodeBitmap(qrCode))
-            outStream?.write("\n".toByteArray())
-            outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
-            outStream?.write(ticketString.toByteArray())
-            outStream?.write(("\n\n\n" +
-                    "").toByteArray())
-        } catch(ex: IOException) {
-            showLongToast(getString(R.string.printer_turned_off))
-            printerConnected = false;
-        }
-
-        clear()
-        progress.dismiss()
     }
 
     fun closeTicket(v: View) {
