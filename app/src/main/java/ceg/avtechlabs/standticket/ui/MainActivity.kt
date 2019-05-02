@@ -26,6 +26,7 @@ import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -150,49 +151,58 @@ class MainActivity : AppCompatActivity() {
         val progress = createProgressDialog(getString(R.string.connecting_with_printer))
         progress.show()
 
-        val pairedDevices = bluetoothAdapter.bondedDevices
-        for(d in pairedDevices) {
-            if(d.name.equals("BlueTooth Printer")) {
-                device = d
-                showLongToast(getString(R.string.toast_printer_found))
-                break
-            }
-        }
+        doAsync {
+            val pairedDevices = bluetoothAdapter.bondedDevices
+            for(d in pairedDevices) {
+                if(d.name.equals("BlueTooth Printer")) {
+                    device = d
+                    runOnUiThread { showLongToast(getString(R.string.toast_printer_found)) }
 
-        if(device == null) {
-            showLongToast(getString(R.string.toast_printer_not_in_paired_devices))
-        } else {
-            val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-            socket = device?.createRfcommSocketToServiceRecord(uuid)
-            if(socket == null) {
-                progress.dismiss()
-                showLongToast(getString(R.string.printer_turned_off))
-                return;
+                    break
+                }
             }
-            try {
-                socket?.connect()
-            } catch (ex: Exception) {
-                progress.dismiss()
-                showLongToast(getString(R.string.printer_turned_off))
-                printerConnected = false
-                return;
+
+            if(device == null) {
+                showLongToast(getString(R.string.toast_printer_not_in_paired_devices))
+            } else {
+                val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+                socket = device?.createRfcommSocketToServiceRecord(uuid)
+                if(socket == null) {
+                    runOnUiThread {
+                        progress.dismiss()
+                        showLongToast(getString(R.string.printer_turned_off))
+                        return@runOnUiThread
+                    }
+                }
+                try {
+                    socket?.connect()
+                } catch (ex: Exception) {
+                    runOnUiThread {
+                        progress.dismiss()
+                        showLongToast(getString(R.string.printer_turned_off))
+                        printerConnected = false
+                        return@runOnUiThread
+                    }
+                }
+                outStream = socket?.outputStream
+                inStream = socket?.inputStream
+                beginListenForData()
+                try {
+                    val msg = "READY."
+                    outStream?.write(msg.toByteArray())
+                    runOnUiThread { showLongToast(getString(R.string.printer_connected)) }
+                    printerConnected = true
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    runOnUiThread {
+                        showLongToast(getString(R.string.unable_to_connect_printer))
+                        progress.dismiss()
+                        printerConnected = false
+                    }
+                }
             }
-            outStream = socket?.outputStream
-            inStream = socket?.inputStream
-            beginListenForData()
-            try {
-                val msg = "READY."
-                outStream?.write(msg.toByteArray())
-                showLongToast(getString(R.string.printer_connected))
-                printerConnected = true
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                showLongToast(getString(R.string.unable_to_connect_printer))
-                progress.dismiss()
-                printerConnected = false
-            }
+            if (progress.isShowing) { progress.dismiss() }
         }
-        progress.dismiss()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -374,4 +384,6 @@ class MainActivity : AppCompatActivity() {
 
         showLongToast(getString(R.string.printer_already_connected))
     }
+
+
 }
