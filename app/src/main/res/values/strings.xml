@@ -19,7 +19,7 @@
     <string name="enable_permissions_manually">Enable permissions manually to run the app.</string>
 
     <string name="alert_shift_not_opened">Shift not opened.</string>
-    <string name="admin_open_shift">Admin should open the shift to print tickets.</string>
+    <string name="admin_open_shift">Admin should open the shift to print tickets. Open shift now?</string>
     <string name="positive_button">Ok</string>
 
     <string name="printer_already_connected">Printer already connected.</string>

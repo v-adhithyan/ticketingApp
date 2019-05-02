@@ -2,6 +2,7 @@ package ceg.avtechlabs.standticket.utils
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.preference.PreferenceManager
 import android.widget.Toast
@@ -72,4 +73,27 @@ fun Context.createProgressDialog(text: String): AlertDialog {
             .build()
 
     return dialog
+}
+
+fun Context.dismiss() {}
+
+fun checkOrCreateListener(func: ()->Unit?): DialogInterface.OnClickListener? {
+    var listener: DialogInterface.OnClickListener? = null
+    if (func != null) {
+        listener = DialogInterface.OnClickListener { dialogInterface, i ->  func() }
+    }
+    return listener
+}
+
+fun Context.showAlertDialog(title:String, message: String, positiveButtonText: String, negativeButtonText: String, okListener: ()->Unit?, cancelListener: ()->Unit?) {
+    val okAction = checkOrCreateListener(okListener)
+    val cancelAction = checkOrCreateListener(cancelListener)
+
+    val alert = AlertDialog.Builder(this)
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(positiveButtonText, okAction)
+            .setNegativeButton(negativeButtonText, cancelAction)
+            .create()
+    alert.show()
 }

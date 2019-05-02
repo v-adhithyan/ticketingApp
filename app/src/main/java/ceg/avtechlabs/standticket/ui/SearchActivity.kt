@@ -1,6 +1,5 @@
 package ceg.avtechlabs.standticket.ui
 
-import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.SpannableStringBuilder

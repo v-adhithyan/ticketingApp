@@ -1,7 +1,6 @@
 package ceg.avtechlabs.standticket.ui
 
 import android.app.Activity
-import android.app.ProgressDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
@@ -15,7 +14,6 @@ import android.os.PersistableBundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
@@ -368,17 +366,16 @@ class MainActivity : AppCompatActivity() {
 
     private fun startShift() {
         if(!isShiftOpen()) {
-            val alert = AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle(getString(R.string.alert_shift_not_opened))
-                    .setMessage(getString(R.string.admin_open_shift))
-                    .setPositiveButton(getString(R.string.positive_button), null)
-                    .create()
             buttonGenTicket.visibility = View.INVISIBLE
-            alert.show()
+            showAlertDialog(getString(R.string.alert_shift_not_opened),
+                    getString(R.string.admin_open_shift),
+                    getString(R.string.yes),
+                    getString(R.string.no),
+                    ::openShiftActivity,
+                    ::dismiss
+            )
         } else {
             buttonGenTicket.visibility = View.VISIBLE
-
             enableBluetoothAndPrinterSetup()
         }
 
@@ -394,5 +391,8 @@ class MainActivity : AppCompatActivity() {
         showLongToast(getString(R.string.printer_already_connected))
     }
 
-
+    private fun openShiftActivity() {
+        val intent = Intent(this@MainActivity, PinActivity::class.java)
+        startActivity(intent)
+    }
 }
