@@ -20,6 +20,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
         vibrator.vibrate(1000)
 
         closeTicket(text, this@CloseTicketActivity, false, 0)
+        finish()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

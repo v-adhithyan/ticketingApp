@@ -1,6 +1,7 @@
 package ceg.avtechlabs.standticket.ui
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
@@ -8,6 +9,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.PersistableBundle
@@ -55,15 +57,11 @@ class MainActivity : AppCompatActivity() {
         checkOrAskPermissions()
     }
 
-
-
     fun reset() {
         editTextVehicleNo.setText("", TextView.BufferType.EDITABLE)
         val millis = System.currentTimeMillis()
-        val qrCode = generateQr(millis)
-        qrView.setImageBitmap(qrCode)
-        var dateTime = getDateTime(millis)
-        dateTimeView.text = dateTime
+        qrView.setImageBitmap(generateQr(millis))
+        dateTimeView.text = getDateTime(millis)
     }
 
     fun generateTicket(v: View) {
@@ -132,7 +130,6 @@ class MainActivity : AppCompatActivity() {
 
     fun clear() {
         editTextVehicleNo.setText("", TextView.BufferType.EDITABLE)
-
     }
 
     val bluetoothAdapter by lazy {
@@ -141,10 +138,9 @@ class MainActivity : AppCompatActivity() {
 
     fun enableBluetoothAndPrinterSetup() {
         try {
-            if(!bluetoothAdapter.isEnabled) {
-                val enableBluetooth = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH)
-            } else {
+            if(!bluetoothAdapter.isEnabled) { // Bluetooth not enabled, connect bluetooth
+                connectBluetooth()
+            } else { // bluetooth is already turned on, connect bluetooth printer
                 connectPrinter()
             }
         } catch (ex: Exception) {
@@ -159,57 +155,19 @@ class MainActivity : AppCompatActivity() {
         progress.show()
 
         doAsync {
-            val pairedDevices = bluetoothAdapter.bondedDevices
-            for(d in pairedDevices) {
-                if(d.name.equals("BlueTooth Printer")) {
-                    device = d
-                    runOnUiThread { showLongToast(getString(R.string.toast_printer_found)) }
-
-                    break
-                }
-            }
-
+            device = getBluetoothPrinter()
             if(device == null) {
                 showLongToast(getString(R.string.toast_printer_not_in_paired_devices))
             } else {
-                val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-                socket = device?.createRfcommSocketToServiceRecord(uuid)
-                if(socket == null) {
-                    runOnUiThread {
-                        progress.dismiss()
-                        showLongToast(getString(R.string.printer_turned_off))
-                        return@runOnUiThread
-                    }
-                }
-                try {
-                    socket?.connect()
-                } catch (ex: Exception) {
-                    runOnUiThread {
-                        progress.dismiss()
-                        showLongToast(getString(R.string.printer_turned_off))
-                        printerConnected = false
-                        return@runOnUiThread
-                    }
-                }
-                outStream = socket?.outputStream
-                inStream = socket?.inputStream
-                beginListenForData()
-                try {
-                    val msg = "READY."
-                    outStream?.write(msg.toByteArray())
-                    runOnUiThread { showLongToast(getString(R.string.printer_connected)) }
-                    printerConnected = true
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                    runOnUiThread {
-                        showLongToast(getString(R.string.unable_to_connect_printer))
-                        progress.dismiss()
-                        printerConnected = false
-                    }
-                }
+                // if device is not null, we found the printer
+                // establish socket connection with printer and notify background thread
+                checkSocket(progress)
+                connectSocket(progress)
+                establishDataStreams(progress)
             }
             if (progress.isShowing) { progress.dismiss() }
         }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -236,9 +194,8 @@ class MainActivity : AppCompatActivity() {
             readBufferPosition = 0
             readBuffer = ByteArray(1024)
 
-            workerThread = Thread(Runnable {
-                while (!Thread.currentThread().isInterrupted && !stopWorker) {
-
+            AsyncTask.execute(Runnable {
+                while (!stopWorker) {
                     try {
 
                         val bytesAvailable = inStream!!.available()
@@ -272,16 +229,12 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
-
                     } catch (ex: IOException) {
                         printerConnected = false
                         stopWorker = true
                     }
-
                 }
             })
-
-            workerThread?.start()
 
         } catch (e: Exception) {
             printerConnected = false
@@ -290,10 +243,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
-
-    }
-
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) { }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -323,7 +273,6 @@ class MainActivity : AppCompatActivity() {
                 return super.onOptionsItemSelected(item)
             }
         }
-
         return true
     }
 
@@ -354,11 +303,7 @@ class MainActivity : AppCompatActivity() {
                     startShift()
                 } else {
                     showLongToast(getString(R.string.enable_permissions_manually))
-                    val intent = Intent()
-                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    val uri = Uri.fromParts("package", this.packageName, null)
-                    intent.data = uri
-                    startActivity(intent)
+                    openSettings()
                 }
             } else -> { }
         }
@@ -378,7 +323,6 @@ class MainActivity : AppCompatActivity() {
             buttonGenTicket.visibility = View.VISIBLE
             enableBluetoothAndPrinterSetup()
         }
-
         reset()
     }
 
@@ -394,5 +338,73 @@ class MainActivity : AppCompatActivity() {
     private fun openShiftActivity() {
         val intent = Intent(this@MainActivity, PinActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun openSettings() {
+        val intent = Intent()
+        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        val uri = Uri.fromParts("package", this.packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    private fun connectBluetooth() {
+        val enableBluetooth = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH)
+    }
+
+    private fun getBluetoothPrinter(): BluetoothDevice? {
+        val pairedDevices = bluetoothAdapter.bondedDevices // get all paired devices
+        for(d in pairedDevices) { // iterate all paired devices
+            if(d.name.equals("BlueTooth Printer")) { // We are looking for device named BlueTooth Printer
+                runOnUiThread { showLongToast(getString(R.string.toast_printer_found)) }
+                return d
+            }
+        }
+        return null
+    }
+
+    private fun checkSocket(progress: AlertDialog) {
+        val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+        socket = device?.createRfcommSocketToServiceRecord(uuid) // establish socket connection with device
+        if(socket == null) {
+            runOnUiThread {
+                progress.dismiss()
+                showLongToast(getString(R.string.printer_turned_off))
+                return@runOnUiThread
+            }
+        }
+    }
+
+    private fun connectSocket(progress: AlertDialog) {
+        try {
+            socket?.connect() // try connecting with device
+        } catch (ex: Exception) {
+            runOnUiThread {
+                progress.dismiss()
+                showLongToast(getString(R.string.printer_turned_off))
+                printerConnected = false
+                return@runOnUiThread
+            }
+        }
+    }
+
+    private fun establishDataStreams(progress: AlertDialog) {
+        outStream = socket?.outputStream
+        inStream = socket?.inputStream
+        beginListenForData()
+        try {
+            val msg = "READY."
+            outStream?.write(msg.toByteArray()) // on successful connection, print sample message
+            runOnUiThread { showLongToast(getString(R.string.printer_connected)) }
+            printerConnected = true
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            runOnUiThread {
+                showLongToast(getString(R.string.unable_to_connect_printer))
+                progress.dismiss()
+                printerConnected = false
+            }
+        }
     }
 }
