@@ -41,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     var outStream: OutputStream? = null
     var inStream: InputStream? = null
 
-    var workerThread: Thread? = null
     var readBuffer: ByteArray? = null
     var readBufferPosition = 0
     var stopWorker = false

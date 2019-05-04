@@ -18,12 +18,7 @@ class ShiftActivity : AppCompatActivity() {
 
         title = getString(R.string.title_open_close_shift)
 
-        if(!isShiftOpen()) {
-            button_close_shift.visibility = View.INVISIBLE
-            button_summary.visibility = View.INVISIBLE
-        } else {
-            button_open_shift.visibility = View.INVISIBLE
-        }
+        checkAndEnableButtons()
     }
 
     fun open() {
@@ -90,5 +85,14 @@ class ShiftActivity : AppCompatActivity() {
 
         startActivity(Intent(this@ShiftActivity, MainActivity::class.java))
         finish()
+    }
+
+    private fun checkAndEnableButtons() {
+        if(!isShiftOpen()) {
+            button_close_shift.visibility = View.INVISIBLE
+            button_summary.visibility = View.INVISIBLE
+        } else {
+            button_open_shift.visibility = View.INVISIBLE
+        }
     }
 }

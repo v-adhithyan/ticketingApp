@@ -10,9 +10,11 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
+import ceg.avtechlabs.standticket.db.Stand
 import ceg.avtechlabs.standticket.utils.createProgressDialog
 import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_search.*
+import java.util.*
 
 class SearchActivity : AppCompatActivity() {
 
@@ -41,24 +43,7 @@ class SearchActivity : AppCompatActivity() {
             if(results == null) {
                 setAdapter(arrayOf(getString(R.string.vehicle_not_found)))
             } else {
-                val details = Array(results.size, {""})
-                for(i in 0..results.size-1) {
-                    val r = results.get(i)
-                    tokens.add(r.pk)
-                    //val tokenNo = "Token No: ${r.id}\n"
-                    val tokenNo = ""
-                    val vehicle ="${getString(R.string.vehicle_no)}: ${r.vehicleNo}\n"
-                    val dateTime = "${getString(R.string.date_and_time)}: ${r.dateTime}\n"
-                    var taken = "${getString(R.string.is_in_stand)}: "
-                    if(r.taken == 0) {
-                        taken = taken + "Yes"
-                    } else {
-                        taken = taken + "No"
-                    }
-
-                    details[i] = "$tokenNo$vehicle$dateTime$taken"
-                }
-                setAdapter(details)
+                setAdapter(populateDetails(results))
             }
 
         } else {
@@ -74,6 +59,27 @@ class SearchActivity : AppCompatActivity() {
     fun setAdapter(results: Array<String>) {
         list_search.invalidate()
         list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
+    }
+
+    private fun populateDetails(results: LinkedList<Stand>): Array<String> {
+        val details = Array(results.size, {""})
+        for(i in 0..results.size-1) {
+            val r = results.get(i)
+            tokens.add(r.pk)
+            //val tokenNo = "Token No: ${r.id}\n"
+            val tokenNo = ""
+            val vehicle ="${getString(R.string.vehicle_no)}: ${r.vehicleNo}\n"
+            val dateTime = "${getString(R.string.date_and_time)}: ${r.dateTime}\n"
+            var taken = "${getString(R.string.is_in_stand)}: "
+            if(r.taken == 0) {
+                taken = taken + "Yes"
+            } else {
+                taken = taken + "No"
+            }
+
+            details[i] = "$tokenNo$vehicle$dateTime$taken"
+        }
+        return details
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
