@@ -70,11 +70,11 @@ class MainActivity : AppCompatActivity() {
         } else {
             val millis = System.currentTimeMillis()
             val qrCode = generateQr(millis)
-            generatePdf(millis, qrCode!!)
+            generateTicket(millis, qrCode!!)
         }
     }
 
-    fun generatePdf(millis: Long, qrCode: Bitmap) {
+    private fun generateTicket(millis: Long, qrCode: Bitmap) {
         val progress = createProgressDialog(getString(R.string.alert_title_printing))
         progress.show()
 
@@ -93,34 +93,8 @@ class MainActivity : AppCompatActivity() {
             val header = "$standName$address"
             val ticketString = "$tokenNo$vechicleNo$dateTime"
 
-            if (outStream == null) {
-                runOnUiThread {
-                    progress.dismiss()
-                    toast(getString(R.string.printer_turned_off))
-                }
-                return@doAsync;
-            }
-
-            try {
-                outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
-                outStream?.write(header.toByteArray())
-                outStream?.write(Utils.decodeBitmap(qrCode))
-                outStream?.write("\n".toByteArray())
-                outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
-                outStream?.write(ticketString.toByteArray())
-                outStream?.write(("\n\n\n" +
-                        "").toByteArray())
-            } catch(ex: IOException) {
-                runOnUiThread {
-                    toast(getString(R.string.printer_turned_off))
-                    printerConnected = false;
-                }
-            } finally {
-                runOnUiThread {
-                    clear()
-                    progress.dismiss()
-                }
-            }
+            checkStream(progress)
+            writeToStream(progress, header, qrCode, ticketString)
         }
     }
 
@@ -404,6 +378,39 @@ class MainActivity : AppCompatActivity() {
                 showLongToast(getString(R.string.unable_to_connect_printer))
                 progress.dismiss()
                 printerConnected = false
+            }
+        }
+    }
+
+    private fun checkStream(progress: AlertDialog) {
+        if (outStream == null) {
+            runOnUiThread {
+                progress.dismiss()
+                toast(getString(R.string.printer_turned_off))
+            }
+            return;
+        }
+    }
+
+    private fun writeToStream(progress: AlertDialog, header:String, qrCode: Bitmap, ticketString: String) {
+        try {
+            outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
+            outStream?.write(header.toByteArray())
+            outStream?.write(Utils.decodeBitmap(qrCode))
+            outStream?.write("\n".toByteArray())
+            outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
+            outStream?.write(ticketString.toByteArray())
+            outStream?.write(("\n\n\n" +
+                    "").toByteArray())
+        } catch(ex: IOException) {
+            runOnUiThread {
+                toast(getString(R.string.printer_turned_off))
+                printerConnected = false;
+            }
+        } finally {
+            runOnUiThread {
+                clear()
+                progress.dismiss()
             }
         }
     }
