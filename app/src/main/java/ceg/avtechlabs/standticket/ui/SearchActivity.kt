@@ -1,32 +1,30 @@
 package ceg.avtechlabs.standticket.ui
 
-import android.app.ProgressDialog
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
-import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.view.ContextMenu
 import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
-
+import ceg.avtechlabs.standticket.db.Stand
+import ceg.avtechlabs.standticket.utils.createProgressDialog
+import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_search.*
 import java.util.*
 
 class SearchActivity : AppCompatActivity() {
 
-    val tokens = mutableListOf<Int>()
+    private val tokens = mutableListOf<Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        title = "Search"
+        title = getString(R.string.title_search)
 
         registerForContextMenu(list_search)
     }
@@ -35,8 +33,7 @@ class SearchActivity : AppCompatActivity() {
     fun search(v: View) {
         val vehicleNo = search_vehicle_no.text.toString()
 
-        val progress = ProgressDialog(this)
-        progress.setMessage("Searching for vehicle..")
+        val progress = createProgressDialog(getString(R.string.searching_vehicle))
         progress.show()
 
         if(vehicleNo.length > 3) {
@@ -44,31 +41,14 @@ class SearchActivity : AppCompatActivity() {
             val results = db.searchVehicle(vehicleNo)
 
             if(results == null) {
-                setAdapter(arrayOf("No such vehicle found"))
+                setAdapter(arrayOf(getString(R.string.vehicle_not_found)))
             } else {
-                val details = Array<String>(results.size, {""})
-                for(i in 0..results.size-1) {
-                    val r = results.get(i)
-                    tokens.add(r.pk)
-                    //val tokenNo = "Token No: ${r.id}\n"
-                    val tokenNo = ""
-                    val vehicle = "Vehicle No: ${r.vehicleNo}\n"
-                    val dateTime = "Date and Time: ${r.dateTime}\n"
-                    var taken = "In stand: "
-                    if(r.taken == 0) {
-                        taken = taken + "Yes"
-                    } else {
-                        taken = taken + "No"
-                    }
-
-                    details[i] = "$tokenNo$vehicle$dateTime$taken"
-                }
-                setAdapter(details)
+                setAdapter(populateDetails(results))
             }
 
         } else {
             search_vehicle_no.text = SpannableStringBuilder("")
-            Toast.makeText(this, "Vehicle no should have 4 digits", Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.toast_vehicle_4_chars))
         }
 
         if(progress.isShowing) {
@@ -78,16 +58,37 @@ class SearchActivity : AppCompatActivity() {
 
     fun setAdapter(results: Array<String>) {
         list_search.invalidate()
-       list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
+        list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
+    }
+
+    private fun populateDetails(results: LinkedList<Stand>): Array<String> {
+        val details = Array(results.size, {""})
+        for(i in 0..results.size-1) {
+            val r = results.get(i)
+            tokens.add(r.pk)
+            //val tokenNo = "Token No: ${r.id}\n"
+            val tokenNo = ""
+            val vehicle ="${getString(R.string.vehicle_no)}: ${r.vehicleNo}\n"
+            val dateTime = "${getString(R.string.date_and_time)}: ${r.dateTime}\n"
+            var taken = "${getString(R.string.is_in_stand)}: "
+            if(r.taken == 0) {
+                taken = taken + "Yes"
+            } else {
+                taken = taken + "No"
+            }
+
+            details[i] = "$tokenNo$vehicle$dateTime$taken"
+        }
+        return details
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
         super.onCreateContextMenu(menu, v, menuInfo)
-        menu?.add("Close Token")
+        menu?.add(getString(R.string.close_token_option))
     }
 
     override fun onContextItemSelected(item: MenuItem): Boolean {
-        if(item.title == "Close Token") {
+        if(item.title == getString(R.string.close_token_option)) {
             val info = item.menuInfo as AdapterView.AdapterContextMenuInfo
             val position = info.position
             val id = tokens[position]

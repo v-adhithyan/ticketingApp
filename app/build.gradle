@@ -34,4 +34,6 @@ dependencies {
 
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
     implementation 'com.dlazaro66.qrcodereaderview:qrcodereaderview:2.0.3'
+    implementation 'com.github.d-max:spots-dialog:1.1@aar'
+    implementation "org.jetbrains.anko:anko-commons:0.10.4"
 }

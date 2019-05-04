@@ -1,7 +1,7 @@
 package ceg.avtechlabs.standticket.ui
 
 import android.app.Activity
-import android.app.ProgressDialog
+import android.app.AlertDialog
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.bluetooth.BluetoothSocket
@@ -9,24 +9,25 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.os.PersistableBundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
-import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.TextView
-import android.widget.Toast
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.db.DbHelper
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.toast
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -40,7 +41,6 @@ class MainActivity : AppCompatActivity() {
     var outStream: OutputStream? = null
     var inStream: InputStream? = null
 
-    var workerThread: Thread? = null
     var readBuffer: ByteArray? = null
     var readBufferPosition = 0
     var stopWorker = false
@@ -48,45 +48,33 @@ class MainActivity : AppCompatActivity() {
     val ALL_PERMISSIONS = 10000
     val PERMISSIONS = arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE, android.Manifest.permission.CAMERA)
     var printerConnected = false
-
-    val BT_PRINTER_TURNED_OFF = "Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button."
+    
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         checkOrAskPermissions()
-
     }
 
-
-
     fun reset() {
-        //val vehicleNo = editTextVehicleNo.text.toString()
         editTextVehicleNo.setText("", TextView.BufferType.EDITABLE)
         val millis = System.currentTimeMillis()
-        val qrCode = generateQr(millis)
-        qrView.setImageBitmap(qrCode)
-        var dateTime = getDateTime(millis)
-        dateTimeView.text = dateTime
-
+        qrView.setImageBitmap(generateQr(millis))
+        dateTimeView.text = getDateTime(millis)
     }
 
     fun generateTicket(v: View) {
         if(editTextVehicleNo.text.toString().length < 4) {
-            Toast.makeText(this, "Vehicle no should be greater than 4 characters to print ticket.", Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.toast_vehicle_4_chars))
         } else {
             val millis = System.currentTimeMillis()
             val qrCode = generateQr(millis)
-            generatePdf(millis, qrCode!!)
+            generateTicket(millis, qrCode!!)
         }
     }
 
-    fun generatePdf(millis: Long, qrCode: Bitmap) {
-        val progress = ProgressDialog(this)
-        progress.setTitle("Printing")
-        progress.setMessage("Please wait..")
-        progress.isIndeterminate = true
-        progress.setCancelable(false)
+    private fun generateTicket(millis: Long, qrCode: Bitmap) {
+        val progress = createProgressDialog(getString(R.string.alert_title_printing))
         progress.show()
 
         val thread = Thread {
@@ -95,40 +83,18 @@ class MainActivity : AppCompatActivity() {
         }
         thread.start()
 
-        val standName = "POLLACHI MUNICIPALITY\nTWO WHEELER PARKING\n"
-        val address = "(Behind Nachimuthu nursing home)\n"
-        val tokenNo = "TOKEN: $millis\n"
-        val vechicleNo = "Vehicle Number: ${editTextVehicleNo.text.toString()}\n"
-        val dateTime = "TIME: ${getDateTime(millis)}\n"
-        val instructions = ""
+        doAsync {
+            val standName = "POLLACHI MUNICIPALITY\nTWO WHEELER PARKING\n"
+            val address = "(Behind Nachimuthu nursing home)\n"
+            val tokenNo = "TOKEN: $millis\n"
+            val vechicleNo = "Vehicle Number: ${editTextVehicleNo.text.toString()}\n"
+            val dateTime = "TIME: ${getDateTime(millis)}\n"
+            val header = "$standName$address"
+            val ticketString = "$tokenNo$vechicleNo$dateTime"
 
-        val bitmap = Bitmap.createScaledBitmap(qrCode, (qrCode.width).toInt(), (qrCode.height).toInt(), true)
-        val header = "$standName$address"
-
-        val ticketString = "$tokenNo$vechicleNo$dateTime"
-
-        if (outStream == null) {
-            progress.dismiss()
-            Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
-            return;
+            checkStream(progress)
+            writeToStream(progress, header, qrCode, ticketString)
         }
-
-        try {
-            outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
-            outStream?.write(header.toByteArray())
-            outStream?.write(Utils.decodeBitmap(qrCode))
-            outStream?.write("\n".toByteArray())
-            outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
-            outStream?.write(ticketString.toByteArray())
-            outStream?.write(("\n\n\n" +
-                    "").toByteArray())
-        } catch(ex: IOException) {
-            Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
-            printerConnected = false;
-        }
-
-        clear()
-        progress.dismiss()
     }
 
     fun closeTicket(v: View) {
@@ -137,82 +103,43 @@ class MainActivity : AppCompatActivity() {
 
     fun clear() {
         editTextVehicleNo.setText("", TextView.BufferType.EDITABLE)
-
     }
 
-    public val bluetoothAdapter by lazy {
+    val bluetoothAdapter by lazy {
         BluetoothAdapter.getDefaultAdapter()
     }
 
     fun enableBluetoothAndPrinterSetup() {
         try {
-            if(!bluetoothAdapter.isEnabled) {
-                val enableBluetooth = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH)
-            } else {
+            if(!bluetoothAdapter.isEnabled) { // Bluetooth not enabled, connect bluetooth
+                connectBluetooth()
+            } else { // bluetooth is already turned on, connect bluetooth printer
                 connectPrinter()
             }
         } catch (ex: Exception) {
             ex.printStackTrace()
             printerConnected = false
-            //Toast.makeText(this, "Printer connection lost. Quit the app and open again.", Toast.LENGTH_LONG).show()
+            showLongToast(getString(R.string.printer_turned_off))
         }
     }
 
     fun connectPrinter() {
-        val progress = ProgressDialog(this)
-        progress.setTitle("Connecting with printer")
-        progress.setMessage("Please wait..")
-        progress.isIndeterminate = true
-        progress.setCancelable(false)
+        val progress = createProgressDialog(getString(R.string.connecting_with_printer))
         progress.show()
-        val pairedDevices = bluetoothAdapter.bondedDevices
-        for(d in pairedDevices) {
-            if(d.name.equals("BlueTooth Printer")) {
-                device = d
-                Toast.makeText(this, "Printer found", Toast.LENGTH_LONG).show()
-                break
-            }
-        }
 
-        if(device == null) {
-            Toast.makeText(this@MainActivity, "Unable to find BlueTooth Printer in paired devices. Please pair the printer and try again.", Toast.LENGTH_LONG).show()
-        } else {
-            val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
-            socket = device?.createRfcommSocketToServiceRecord(uuid)
-            if(socket == null) {
-                progress.dismiss()
-                Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
-                return;
+        doAsync {
+            device = getBluetoothPrinter()
+            if(device == null) {
+                showLongToast(getString(R.string.toast_printer_not_in_paired_devices))
+            } else {
+                // if device is not null, we found the printer
+                // establish socket connection with printer and notify background thread
+                checkSocket(progress)
+                connectSocket(progress)
+                establishDataStreams(progress)
             }
-            try {
-                socket?.connect()
-            } catch (ex: Exception) {
-                progress.dismiss()
-                Toast.makeText(this@MainActivity, BT_PRINTER_TURNED_OFF, Toast.LENGTH_LONG).show()
-                printerConnected = false
-                return;
-            }
-            outStream = socket?.outputStream
-            inStream = socket?.inputStream
-            Toast.makeText(this, "Stream opened", Toast.LENGTH_LONG).show()
-            beginListenForData()
-            try {
-                val msg = "READY.\n\n\n\n"
-                outStream?.write(msg.toByteArray())
-                Toast.makeText(this, "Connection established with printer.", Toast.LENGTH_LONG).show()
-                printerConnected = true
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                Toast.makeText(this, "Unable to establish connection. Quit the app and open again to reestablish connection.", Toast.LENGTH_LONG).show()
-                progress.dismiss()
-                printerConnected = false
-            }
+            if (progress.isShowing) { progress.dismiss() }
         }
-        progress.dismiss()
-    }
-
-    fun print() {
 
     }
 
@@ -221,15 +148,12 @@ class MainActivity : AppCompatActivity() {
             ENABLE_BLUETOOTH -> {
                 if(resultCode == Activity.RESULT_OK) { connectPrinter()
                 } else {
-                    Toast.makeText(this, "Try again", Toast.LENGTH_LONG).show()
+                    showLongToast(getString(R.string.try_again))
                 }
             }   else -> {
-
-            Toast.makeText(this, "Turn on bluetooth to continue", Toast.LENGTH_LONG).show()
+                showLongToast(getString(R.string.turn_on_bluetooth))
             }
-
         }
-
     }
 
     internal fun beginListenForData() {
@@ -243,9 +167,8 @@ class MainActivity : AppCompatActivity() {
             readBufferPosition = 0
             readBuffer = ByteArray(1024)
 
-            workerThread = Thread(Runnable {
-                while (!Thread.currentThread().isInterrupted && !stopWorker) {
-
+            AsyncTask.execute(Runnable {
+                while (!stopWorker) {
                     try {
 
                         val bytesAvailable = inStream!!.available()
@@ -279,16 +202,12 @@ class MainActivity : AppCompatActivity() {
                                 }
                             }
                         }
-
                     } catch (ex: IOException) {
                         printerConnected = false
                         stopWorker = true
                     }
-
                 }
             })
-
-            workerThread?.start()
 
         } catch (e: Exception) {
             printerConnected = false
@@ -297,10 +216,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
-
-    }
-
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) { }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
@@ -322,7 +238,7 @@ class MainActivity : AppCompatActivity() {
 
             R.id.menu_summary -> {
                 val db = DbHelper(this)
-                Toast.makeText(this, "${db.summaryEmployee()} tokens issued", Toast.LENGTH_LONG).show()
+                showLongToast("${db.summaryEmployee()} tokens issued")
 
             }
 
@@ -330,19 +246,7 @@ class MainActivity : AppCompatActivity() {
                 return super.onOptionsItemSelected(item)
             }
         }
-
         return true
-    }
-
-    private val progress by lazy {
-        ProgressDialog(this)
-    }
-
-    companion object {
-        val START = "start"
-        val SEARCH = "SEARCH"
-        val CLOSE = "close"
-        val SUMMARY = "summary"
     }
 
     fun permissionGranted(permission: String): Boolean {
@@ -371,12 +275,8 @@ class MainActivity : AppCompatActivity() {
                 if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
                     startShift()
                 } else {
-                    Toast.makeText(this@MainActivity, "Enable permissions manually to run the app.", Toast.LENGTH_LONG).show()
-                    val intent = Intent()
-                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    val uri = Uri.fromParts("package", this.packageName, null)
-                    intent.data = uri
-                    startActivity(intent)
+                    showLongToast(getString(R.string.enable_permissions_manually))
+                    openSettings()
                 }
             } else -> { }
         }
@@ -384,24 +284,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun startShift() {
         if(!isShiftOpen()) {
-            val alert = AlertDialog.Builder(this)
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle("Shift not opened")
-                    .setMessage("Admin should open the shift to print tickets.")
-                    .setPositiveButton("Ok", null)
-                    .create()
             buttonGenTicket.visibility = View.INVISIBLE
-            alert.show()
+            showAlertDialog(getString(R.string.alert_shift_not_opened),
+                    getString(R.string.admin_open_shift),
+                    getString(R.string.yes),
+                    getString(R.string.no),
+                    ::openShiftActivity,
+                    ::dismiss
+            )
         } else {
             buttonGenTicket.visibility = View.VISIBLE
-
             enableBluetoothAndPrinterSetup()
         }
-
         reset()
-
-        progress.setTitle("Please wait")
-        progress.setMessage("Connecting with printer")
     }
 
     fun printerConnect(v: View) {
@@ -410,6 +305,112 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        Toast.makeText(this@MainActivity, "Printer already connected.", Toast.LENGTH_LONG).show()
+        showLongToast(getString(R.string.printer_already_connected))
+    }
+
+    private fun openShiftActivity() {
+        val intent = Intent(this@MainActivity, PinActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun openSettings() {
+        val intent = Intent()
+        intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+        val uri = Uri.fromParts("package", this.packageName, null)
+        intent.data = uri
+        startActivity(intent)
+    }
+
+    private fun connectBluetooth() {
+        val enableBluetooth = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+        startActivityForResult(enableBluetooth, ENABLE_BLUETOOTH)
+    }
+
+    private fun getBluetoothPrinter(): BluetoothDevice? {
+        val pairedDevices = bluetoothAdapter.bondedDevices // get all paired devices
+        for(d in pairedDevices) { // iterate all paired devices
+            if(d.name.equals("BlueTooth Printer")) { // We are looking for device named BlueTooth Printer
+                runOnUiThread { showLongToast(getString(R.string.toast_printer_found)) }
+                return d
+            }
+        }
+        return null
+    }
+
+    private fun checkSocket(progress: AlertDialog) {
+        val uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")
+        socket = device?.createRfcommSocketToServiceRecord(uuid) // establish socket connection with device
+        if(socket == null) {
+            runOnUiThread {
+                progress.dismiss()
+                showLongToast(getString(R.string.printer_turned_off))
+                return@runOnUiThread
+            }
+        }
+    }
+
+    private fun connectSocket(progress: AlertDialog) {
+        try {
+            socket?.connect() // try connecting with device
+        } catch (ex: Exception) {
+            runOnUiThread {
+                progress.dismiss()
+                showLongToast(getString(R.string.printer_turned_off))
+                printerConnected = false
+                return@runOnUiThread
+            }
+        }
+    }
+
+    private fun establishDataStreams(progress: AlertDialog) {
+        outStream = socket?.outputStream
+        inStream = socket?.inputStream
+        beginListenForData()
+        try {
+            val msg = "READY."
+            outStream?.write(msg.toByteArray()) // on successful connection, print sample message
+            runOnUiThread { showLongToast(getString(R.string.printer_connected)) }
+            printerConnected = true
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            runOnUiThread {
+                showLongToast(getString(R.string.unable_to_connect_printer))
+                progress.dismiss()
+                printerConnected = false
+            }
+        }
+    }
+
+    private fun checkStream(progress: AlertDialog) {
+        if (outStream == null) {
+            runOnUiThread {
+                progress.dismiss()
+                toast(getString(R.string.printer_turned_off))
+            }
+            return;
+        }
+    }
+
+    private fun writeToStream(progress: AlertDialog, header:String, qrCode: Bitmap, ticketString: String) {
+        try {
+            outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
+            outStream?.write(header.toByteArray())
+            outStream?.write(Utils.decodeBitmap(qrCode))
+            outStream?.write("\n".toByteArray())
+            outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
+            outStream?.write(ticketString.toByteArray())
+            outStream?.write(("\n\n\n" +
+                    "").toByteArray())
+        } catch(ex: IOException) {
+            runOnUiThread {
+                toast(getString(R.string.printer_turned_off))
+                printerConnected = false;
+            }
+        } finally {
+            runOnUiThread {
+                clear()
+                progress.dismiss()
+            }
+        }
     }
 }
