@@ -3,7 +3,7 @@
     <string name="title_activity_search">SearchActivity</string>
     <string name="title_activity_shift">ShiftActivity</string>
 
-    <string name="printer_turned_off">Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button.</string>
+    <string name="printer_turned_off">Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button. After connecting printer, tap print ticket button.</string>
     <string name="toast_vehicle_4_chars">Vehicle no should be greater than 4 characters to print ticket.</string>
     <string name="alert_title_printing">Printing</string>
     <string name="alert_message_please_wait">Please wait ..</string>

@@ -77,12 +77,6 @@ class MainActivity : AppCompatActivity() {
         val progress = createProgressDialog(getString(R.string.alert_title_printing))
         progress.show()
 
-        val thread = Thread {
-            val DbHelper = DbHelper(this@MainActivity)
-            DbHelper.add(millis.toString(), editTextVehicleNo.text.toString(), getDateTime(millis))
-        }
-        thread.start()
-
         doAsync {
             val standName = "POLLACHI MUNICIPALITY\nTWO WHEELER PARKING\n"
             val address = "(Behind Nachimuthu nursing home)\n"
@@ -93,7 +87,13 @@ class MainActivity : AppCompatActivity() {
             val ticketString = "$tokenNo$vechicleNo$dateTime"
 
             checkStream(progress)
-            writeToStream(progress, header, qrCode, ticketString)
+            if(writeToStream(progress, header, qrCode, ticketString)) {
+                val thread = Thread {
+                    val DbHelper = DbHelper(this@MainActivity)
+                    DbHelper.add(millis.toString(), editTextVehicleNo.text.toString(), getDateTime(millis))
+                }
+                thread.start()
+            }
         }
     }
 
@@ -391,7 +391,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun writeToStream(progress: AlertDialog, header:String, qrCode: Bitmap, ticketString: String) {
+    private fun writeToStream(progress: AlertDialog, header:String, qrCode: Bitmap, ticketString: String): Boolean {
         try {
             outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
             outStream?.write(header.toByteArray())
@@ -401,16 +401,18 @@ class MainActivity : AppCompatActivity() {
             outStream?.write(ticketString.toByteArray())
             outStream?.write(("\n\n\n" +
                     "").toByteArray())
+            runOnUiThread {
+                progress.dismiss()
+                clear()
+            }
+            return true
         } catch(ex: IOException) {
             runOnUiThread {
                 toast(getString(R.string.printer_turned_off))
                 printerConnected = false;
-            }
-        } finally {
-            runOnUiThread {
-                clear()
                 progress.dismiss()
             }
+            return false
         }
     }
 }
