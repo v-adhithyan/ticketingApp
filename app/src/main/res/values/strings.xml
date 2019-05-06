@@ -5,6 +5,7 @@
 
     <string name="printer_turned_off">Printer is turned off or connection lost with printer. Turn on the printer and tap connect Printer button. After connecting printer, tap print ticket button.</string>
     <string name="toast_vehicle_4_chars">Vehicle no should be greater than 4 characters to print ticket.</string>
+    <string name="toast_enter_atleast_3_chars">Atleast 3 numbers should be entered for searching.</string>
     <string name="alert_title_printing">Printing</string>
     <string name="alert_message_please_wait">Please wait ..</string>
     <string name="connecting_with_printer">Connecting with printer</string>

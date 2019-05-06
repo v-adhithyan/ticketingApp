@@ -399,8 +399,11 @@ class MainActivity : AppCompatActivity() {
             outStream?.write("\n".toByteArray())
             outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
             outStream?.write(ticketString.toByteArray())
-            outStream?.write(("\n\n\n" +
-                    "").toByteArray())
+            outStream?.write(("\nBilling software powered by\n").toByteArray())
+            outStream?.write(PrinterCommands.ESC_ALIGN_CENTER)
+            outStream?.write("AV Tech Labs\n".toByteArray())
+            outStream?.write(PrinterCommands.ESC_ALIGN_LEFT)
+            outStream?.write("Contact avtechlabs@gmail.com for sales.\n\n\n".toByteArray())
             runOnUiThread {
                 progress.dismiss()
                 clear()

@@ -36,7 +36,7 @@ class SearchActivity : AppCompatActivity() {
         val progress = createProgressDialog(getString(R.string.searching_vehicle))
         progress.show()
 
-        if(vehicleNo.length > 3) {
+        if(vehicleNo.length >= 2) {
             val db = DbHelper(this)
             val results = db.searchVehicle(vehicleNo)
 
@@ -48,7 +48,7 @@ class SearchActivity : AppCompatActivity() {
 
         } else {
             search_vehicle_no.text = SpannableStringBuilder("")
-            showLongToast(getString(R.string.toast_vehicle_4_chars))
+            showLongToast(getString(R.string.toast_enter_atleast_3_chars))
         }
 
         if(progress.isShowing) {
