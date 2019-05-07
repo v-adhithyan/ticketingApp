@@ -41,7 +41,7 @@
             <EditText
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Registration No"
+                android:hint="@string/hint_vehicle_no"
                 android:textColorHint="@color/colorAccent"
                 android:textAllCaps="true"
                 android:id="@+id/editTextVehicleNo"/>
@@ -72,7 +72,7 @@
         android:layout_below="@+id/inputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="print ticket"
+        android:text="@string/button_print_ticket"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"
         android:onClick="generateTicket"/>
@@ -87,7 +87,7 @@
         android:layout_width="match_parent"
         android:layout_below="@+id/buttonGenTicket"
         android:layout_height="wrap_content"
-        android:text="Close ticket"
+        android:text="@string/button_close_ticket"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"
         android:onClick="closeTicket"/>
@@ -103,7 +103,7 @@
         android:layout_width="match_parent"
         android:layout_below="@+id/buttonCloseTicket"
         android:layout_height="wrap_content"
-        android:text="Connect Printer"
+        android:text="@string/button_connect_printer"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"
         android:onClick="printerConnect"/>

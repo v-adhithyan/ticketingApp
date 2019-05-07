@@ -50,4 +50,17 @@
     <string name="confirm_close_shift_now">Do you want to close the shift?</string>
     <string name="shift_closed">Shift closed</string>
     <string name="close_shift_to_view_summary">Close shift to view summary</string>
+
+    <string name="hint_vehicle_no">Registration number</string>
+    <string name="button_print_ticket">Print Ticket</string>
+    <string name="button_close_ticket">Close Ticket</string>
+    <string name="button_connect_printer">Connect Printer</string>
+
+    <string name="hint_password">Password</string>
+
+    <string name="button_open">Open</string>
+    <string name="button_close">Close</string>
+    <string name="button_summary">Summary</string>
+
+    <string name="button_manage">Manage</string>
 </resources>

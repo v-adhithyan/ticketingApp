@@ -11,7 +11,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Open"
+        android:text="@string/button_open"
         android:id="@+id/button_open_shift"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"
@@ -20,7 +20,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Close"
+        android:text="@string/button_close"
         android:id="@+id/button_close_shift"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"
@@ -30,7 +30,7 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Summary"
+        android:text="@string/button_summary"
         android:id="@+id/button_summary"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"

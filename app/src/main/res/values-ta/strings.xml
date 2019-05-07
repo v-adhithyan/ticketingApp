@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">டிக்கெட் </string>
+    <string name="title_activity_search">வாகனங்கள் தேடல் </string>
+    <string name="title_activity_shift">மேலாண்மை</string>
+
+    <string name="printer_turned_off">பிரிண்டர் நிறுத்தி வைக்கப்பட்டுள்ளது.</string>
+    <string name="toast_vehicle_4_chars">டிக்கெட் பிரிண்ட் செய்ய, வண்டி எண் குறைந்தபட்சம் நான்கு எண்களாவது இருக்கவேண்டும்.</string>
+    <string name="toast_enter_atleast_3_chars">குறைந்தபட்சம் இரண்டு எண்கள் தேடுவதற்கு தேவை.</string>
+    <string name="alert_title_printing">பிரிண்ட் செய்யப்படுகிறது ..</string>
+    <string name="alert_message_please_wait">தயவு செய்து காத்திருக்கவும் ..</string>
+    <string name="connecting_with_printer">பிரிண்டர் இணைக்கப்படுகிறது ..</string>
+    <string name="toast_printer_found">பிரிண்டர் கண்டுபிடிக்கப்பட்டது.</string>
+    <string name="toast_printer_not_in_paired_devices">பிரிண்டர் இந்த கருவியுடன் நட்பில் இல்லை. ப்ளூடூத் பிரிண்ட்டரை இந்த கருவியுடன் நட்பு செய்து , பிறகு முயற்சிக்கவும்.</string>
+    <string name="printer_connected">பிரிண்டர் இணைக்கப்பட்டது.</string>
+    <string name="unable_to_connect_printer">பிரிண்ட்டருடன் இணைப்பை ஏற்படுத்தமுடியவில்லை.</string>
+
+    <string name="try_again">மீண்டும் முயற்சிக்கவும்.</string>
+    <string name="turn_on_bluetooth">மேலும் தொடர, ப்ளூடூத் பிரிண்ட்டரை on செய்யவும். பிறகு பிரிண்ட்டரை இணை என்ற பொத்தானை அழுத்தவும். </string>
+
+    <string name="enable_permissions_manually">இப்போது கேட்கப்பட்ட அனுமதிகளை தந்தால் தான், செயலி தங்குதடையின்றி இயங்கும்.</string>
+
+    <string name="alert_shift_not_opened">ஷிப்ட் திறக்கப்படவில்லை.</string>
+    <string name="admin_open_shift">மேலாளர் ஷிப்ட்டை திறந்தால்தான், டிக்கெட்டை அச்சிட முடியும். திறக்க விரும்புகிறீர்களா ?</string>
+    <string name="positive_button">சரி </string>
+
+    <string name="printer_already_connected">பிரிண்டர் இணைப்பில் உள்ளது.</string>
+
+    <string name="closing_ticket">டிக்கெட் சமர்ப்பிக்கப்படுகிறது ..</string>
+    <string name="ticket_already_closed">ஏற்கனவே இந்த டிக்கெட் சமர்பிக்கப்பட்டுவிட்டது .</string>
+    <string name="ticket_closed_successfully">டிக்கெட் வெற்றிகரமாக சமர்பிக்கப்பட்டுவிட்டது.</string>
+
+    <string name="wrong_password">தவறான கடவுச்சொல்.</string>
+
+
+    <string name="title_search">தேடு</string>
+    <string name="searching_vehicle">வாகனம் தேடப்படுகிறது ..</string>
+    <string name="vehicle_not_found">எந்த வண்டியும் தேடப்பட்ட எண்ணில் இங்கே இல்லை.</string>
+
+    <string name="date_and_time">தேதி மற்றும் நேரம்</string>
+    <string name="vehicle_no">வண்டி எண்</string>
+    <string name="is_in_stand">வண்டி இங்கே உள்ளதா ?</string>
+    <string name="yes">ஆம் </string>
+    <string name="no">இல்லை </string>
+
+    <string name="close_token_option">டிக்கெட்டை சமர்ப்பிக்கவும்.</string>
+    <string name="title_open_close_shift">ஷிப்ட்டை திறக்க அல்லது நிறுத்த</string>
+    <string name="alert_title">செய்தி </string>
+    <string name="confirm_open_shift_now">இப்போது ஷிப்ட்டை திறக்க விரும்புகிறீர்களா ?</string>
+    <string name="shift_opened">ஷிப்ட் திறக்கப்பட்டது.</string>
+    <string name="confirm_close_shift_now">இப்போது ஷிப்ட்டை நிறுத்த விரும்புகிறீர்களா?</string>
+    <string name="shift_closed">ஷிப்ட் மூடப்பட்டது.</string>
+    <string name="close_shift_to_view_summary">ஷிப்ட்டை நிறுத்திவிட்டு பிறகு முயற்சிக்கவும்.</string>
+
+    <string name="hint_vehicle_no">வண்டி எண்</string>
+    <string name="button_print_ticket">டிக்கெட்டை அச்சிடு</string>
+    <string name="button_close_ticket">டிக்கெட்டை சமர்ப்பி</string>
+    <string name="button_connect_printer">பிரிண்ட்டரை இணை</string>
+
+    <string name="hint_password">கடவுச் சொல்</string>
+
+    <string name="button_open">ஷிப்ட்டை திறக்கவும்</string>
+    <string name="button_close">ஷிப்ட்டை நிறுத்தவும்</string>
+    <string name="button_summary">இன்றைய நிலை</string>
+
+    <string name="button_manage">மேலாண்மை</string>
+</resources>
+

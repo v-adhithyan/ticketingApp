@@ -6,18 +6,18 @@
         android:id="@+id/menu_summary"
         android:orderInCategory="100"
         app:showAsAction="never"
-        android:title="Summary"/>
+        android:title="@string/button_summary"/>
 
     <item
         android:id="@+id/menu_close_shift"
         android:orderInCategory="101"
         app:showAsAction="never"
-        android:title="Shift"/>
+        android:title="@string/button_manage"/>
 
     <item
         android:id="@+id/menu_search"
         android:orderInCategory="1"
         app:showAsAction="always"
-        android:title="Search"/>
+        android:title="@string/title_search"/>
 
 </menu>

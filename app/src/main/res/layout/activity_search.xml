@@ -12,7 +12,7 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Vehicle no"
+        android:hint="@string/hint_vehicle_no"
         android:inputType="number"
         android:id="@+id/search_vehicle_no"/>
 
@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/search_vehicle_no"
         android:id="@+id/button_search"
-        android:text="Search"
+        android:text="@string/title_search"
         android:paddingTop="10dp"
         android:background="@color/colorAccent"
         android:textColor="@android:color/white"

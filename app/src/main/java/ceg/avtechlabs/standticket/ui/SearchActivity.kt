@@ -72,9 +72,9 @@ class SearchActivity : AppCompatActivity() {
             val dateTime = "${getString(R.string.date_and_time)}: ${r.dateTime}\n"
             var taken = "${getString(R.string.is_in_stand)}: "
             if(r.taken == 0) {
-                taken = taken + "Yes"
+                taken = taken + getString(R.string.yes)
             } else {
-                taken = taken + "No"
+                taken = taken + getString(R.string.no)
             }
 
             details[i] = "$tokenNo$vehicle$dateTime$taken"
