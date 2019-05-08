@@ -3,7 +3,7 @@
     <string name="title_activity_search">வாகனங்கள் தேடல் </string>
     <string name="title_activity_shift">மேலாண்மை</string>
 
-    <string name="printer_turned_off">பிரிண்டர் நிறுத்தி வைக்கப்பட்டுள்ளது.</string>
+    <string name="printer_turned_off">பிரிண்டர் நிறுத்தி வைக்கப்பட்டுள்ளது. பிரிண்ட்டரை ஆன் செய்துவிட்டு, பிறகு பிரிண்ட்டரை இணைக்கவும் என்ற பொத்தானை அழுத்தவும்.</string>
     <string name="toast_vehicle_4_chars">டிக்கெட் பிரிண்ட் செய்ய, வண்டி எண் குறைந்தபட்சம் நான்கு எண்களாவது இருக்கவேண்டும்.</string>
     <string name="toast_enter_atleast_3_chars">குறைந்தபட்சம் இரண்டு எண்கள் தேடுவதற்கு தேவை.</string>
     <string name="alert_title_printing">பிரிண்ட் செய்யப்படுகிறது ..</string>
