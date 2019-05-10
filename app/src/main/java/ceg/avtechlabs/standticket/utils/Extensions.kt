@@ -28,8 +28,11 @@ fun generateQr(time: Long): Bitmap? {
     return null
 }
 
-fun getDateTime(millis: Long): String {
+fun getDateTime(millis: Long, utc: Boolean): String {
     val formatter = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
+    if(utc) {
+        formatter.timeZone = TimeZone.getTimeZone("UTC")
+    }
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = millis
     return formatter.format(calendar.time)

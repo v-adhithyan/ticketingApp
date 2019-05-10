@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         editTextVehicleNo.setText("", TextView.BufferType.EDITABLE)
         val millis = System.currentTimeMillis()
         qrView.setImageBitmap(generateQr(millis))
-        dateTimeView.text = getDateTime(millis)
+        dateTimeView.text = getDateTime(millis, utc = false)
     }
 
     fun generateTicket(v: View) {
@@ -82,7 +82,7 @@ class MainActivity : AppCompatActivity() {
             val address = "(Behind Nachimuthu nursing home)\n"
             val tokenNo = "TOKEN: $millis\n"
             val vechicleNo = "Vehicle Number: ${editTextVehicleNo.text.toString()}\n"
-            val dateTime = "TIME: ${getDateTime(millis)}\n"
+            val dateTime = "TIME: ${getDateTime(millis, utc = false)}\n"
             val header = "$standName$address"
             val ticketString = "$tokenNo$vechicleNo$dateTime"
 
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
             if(writeToStream(progress, header, qrCode, ticketString)) {
                 val thread = Thread {
                     val DbHelper = DbHelper(this@MainActivity)
-                    DbHelper.add(millis.toString(), editTextVehicleNo.text.toString(), getDateTime(millis))
+                    DbHelper.add(millis.toString(), editTextVehicleNo.text.toString(), getDateTime(millis, utc = false))
                 }
                 thread.start()
             }
