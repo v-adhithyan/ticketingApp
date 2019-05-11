@@ -2,21 +2,25 @@ package ceg.avtechlabs.standticket.utils
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
-import org.junit.Assert.*
 
 
 @RunWith(RobolectricTestRunner::class)
 class TestExtensions {
-    private fun getContext(): Context {
-        return ApplicationProvider.getApplicationContext<Context>()
+    private lateinit var context: Context
+
+    @Before
+    fun setup() {
+        context = ApplicationProvider.getApplicationContext<Context>()
     }
 
     @Test
     fun testCloseShift() {
-        val context = getContext()
         assertFalse(context.isShiftClosed())
 
         context.closeShift()
@@ -28,7 +32,6 @@ class TestExtensions {
 
     @Test
     fun testOpenShift() {
-        val context = getContext()
         assertFalse(context.isShiftOpen())
 
         context.openShift()

@@ -25,21 +25,21 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".ui.MainActivity">
+        <activity android:name=".views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".ui.CloseTicketActivity" />
-        <activity android:name=".ui.PinActivity" />
+        <activity android:name=".views.CloseTicketActivity" />
+        <activity android:name=".views.PinActivity" />
         <activity
-            android:name=".ui.SearchActivity"
+            android:name=".views.SearchActivity"
             android:label="@string/title_activity_search"
              />
         <activity
-            android:name=".ui.ShiftActivity"
+            android:name=".views.ShiftActivity"
             android:label="@string/title_activity_shift"
             ></activity>
     </application>
