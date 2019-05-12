@@ -72,9 +72,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/button_print_ticket"
-        android:background="@color/colorAccent"
+        android:background="@color/grayA"
         android:textColor="@android:color/white"
         android:onClick="generateTicket"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
@@ -87,7 +88,7 @@
         android:layout_below="@+id/buttonGenTicket"
         android:layout_height="wrap_content"
         android:text="@string/button_close_ticket"
-        android:background="@color/colorAccent"
+        android:background="@color/redA"
         android:textColor="@android:color/white"
         android:onClick="closeTicket"/>
 
@@ -103,7 +104,7 @@
         android:layout_below="@+id/buttonCloseTicket"
         android:layout_height="wrap_content"
         android:text="@string/button_connect_printer"
-        android:background="@color/colorAccent"
+        android:background="@color/grayA"
         android:textColor="@android:color/white"
         android:onClick="printerConnect"/>
 
