@@ -3,12 +3,12 @@ package ceg.avtechlabs.standticket
 import ceg.avtechlabs.standticket.models.DbHelper
 import ceg.avtechlabs.standticket.models.Stand
 import ceg.avtechlabs.standticket.presenters.SearchPresenter
-import com.nhaarman.mockito_kotlin.mock
-import com.nhaarman.mockito_kotlin.never
-import com.nhaarman.mockito_kotlin.verify
+import com.nhaarman.mockito_kotlin.*
 import org.junit.After
 import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
+import org.mockito.Mockito.`when`
 import java.util.*
 
 class TestSearch {
@@ -21,6 +21,7 @@ class TestSearch {
         presenter = SearchPresenter()
         view = mock()
         presenter.attachView(view)
+        dbHelper = Mockito.mock(DbHelper::class.java)
     }
 
     @After
@@ -49,9 +50,9 @@ class TestSearch {
     @Test
     fun test_search_with_valid_data_no_results() {
         val query = "00"
+        //Mockito.`when`(dbHelper.searchVehicle(query)).thenAnswer { return@thenAnswer null }
         presenter.doSearch(query)
         verify(view).search(query)
         verify(view, never()).showSearchResults(LinkedList<Stand>())
     }
 }
-

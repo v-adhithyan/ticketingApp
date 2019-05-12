@@ -47,25 +47,23 @@ class SearchActivity : AppCompatActivity(), SearchPresenter.View {
         list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
     }
 
-    private fun populateDetails(results: LinkedList<Stand>): Array<String> {
-        val details = Array(results.size, {""})
-        for(i in 0..results.size-1) {
-            val r = results.get(i)
-            tokens.add(r.pk)
-            //val tokenNo = "Token No: ${r.id}\n"
-            val tokenNo = ""
-            val vehicle ="${getString(R.string.vehicle_no)}: ${r.vehicleNo}\n"
-            val dateTime = "${getString(R.string.date_and_time)}: ${r.dateTime}\n"
-            var taken = "${getString(R.string.is_in_stand)}: "
-            if(r.taken == 0) {
-                taken = taken + getString(R.string.yes)
-            } else {
-                taken = taken + getString(R.string.no)
-            }
+    private fun formatVehicle(result: Stand): String {
+        return "${getString(R.string.vehicle_no)}: ${result.vehicleNo}"
+    }
 
-            details[i] = "$tokenNo$vehicle$dateTime$taken"
-        }
-        return details
+    private fun getDateTime(result: Stand): String {
+        return "${getString(R.string.date_and_time)}: ${result.dateTime}\n"
+    }
+
+    private fun isInStand(result: Stand): String {
+        val takenMap = mapOf<Int, String>(0 to getString(R.string.yes), 1 to getString(R.string.no))
+        return "${getString(R.string.is_in_stand)}${takenMap.get(result.taken)}"
+    }
+
+    private fun populateDetails(results: LinkedList<Stand>): Array<String> {
+        return Array(results.size, {
+            "${formatVehicle(results[it])}${getDateTime(results[it])}${isInStand(results[it])}"
+        })
     }
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
