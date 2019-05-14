@@ -48,16 +48,16 @@ class SearchActivity : AppCompatActivity(), SearchPresenter.View {
     }
 
     private fun formatVehicle(result: Stand): String {
-        return "${getString(R.string.vehicle_no)}: ${result.vehicleNo}"
+        return "${getString(R.string.vehicle_no)}:\t${result.vehicleNo}\n"
     }
 
     private fun getDateTime(result: Stand): String {
-        return "${getString(R.string.date_and_time)}: ${result.dateTime}\n"
+        return "${getString(R.string.date_and_time)}:\t${result.dateTime}\n"
     }
 
     private fun isInStand(result: Stand): String {
         val takenMap = mapOf<Int, String>(0 to getString(R.string.yes), 1 to getString(R.string.no))
-        return "${getString(R.string.is_in_stand)}${takenMap.get(result.taken)}"
+        return "${getString(R.string.is_in_stand)}:\t${takenMap.get(result.taken)}"
     }
 
     private fun populateDetails(results: LinkedList<Stand>): Array<String> {

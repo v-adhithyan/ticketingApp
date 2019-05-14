@@ -43,6 +43,9 @@
                 android:hint="@string/hint_vehicle_no"
                 android:textColorHint="@color/colorAccent"
                 android:textAllCaps="true"
+                android:defaultFocusHighlightEnabled="true"
+                android:focusedByDefault="true"
+                android:inputType="text"
                 android:id="@+id/editTextVehicleNo"/>
 
             <View
