@@ -7,12 +7,14 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.models.DbHelper
+import ceg.avtechlabs.standticket.presenters.ShiftPresenter
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_shift.*
 import org.jetbrains.anko.toast
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
-class ShiftActivity : AppCompatActivity() {
+class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
+    private val presenter:ShiftPresenter = ShiftPresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,10 +22,11 @@ class ShiftActivity : AppCompatActivity() {
 
         title = getString(R.string.title_open_close_shift)
 
+        presenter.attachView(this)
         checkAndEnableButtons()
     }
 
-    fun open() {
+    override fun open() {
         showAlertDialog(getString(R.string.alert_title),
                 getString(R.string.confirm_open_shift_now),
                 getString(R.string.yes),
@@ -34,10 +37,14 @@ class ShiftActivity : AppCompatActivity() {
     }
 
     fun setOpen(v: View) {
-        open()
+        presenter.doOpen()
     }
 
     fun setClose(v: View) {
+        presenter.doClose()
+    }
+
+    override fun close() {
         showAlertDialog(getString(R.string.alert_title),
                 getString(R.string.confirm_close_shift_now),
                 getString(R.string.yes),
@@ -47,16 +54,19 @@ class ShiftActivity : AppCompatActivity() {
         )
     }
 
-    fun summary(v: View) {
-        if(!isShiftClosed()) {
-            toast(getString(R.string.close_shift_to_view_summary))
-        } else {
-            val db = DbHelper(this)
-            val count = db.summary()
-            toast("${count.toString()} tokens issued.")
-            button_open_shift.visibility = View.VISIBLE
-        }
+    override fun showToastToCloseShiftForViewingSummary() {
+        toast(getString(R.string.close_shift_to_view_summary))
+    }
 
+    override fun showSummaryDetails() {
+        val db = DbHelper(this)
+        val count = db.summary()
+        toast("${count.toString()} tokens issued.")
+        button_open_shift.visibility = View.VISIBLE
+    }
+
+    fun summary(v: View) {
+        presenter.showSummary(isShiftClosed())
     }
 
     override fun onBackPressed() {
@@ -69,7 +79,19 @@ class ShiftActivity : AppCompatActivity() {
         db.close()
         toast(getString(R.string.shift_closed))
         closeShift()
+        hideCloseShiftButton()
+    }
+
+    override fun hideCloseShiftButton() {
         button_close_shift.visibility = View.INVISIBLE
+    }
+
+    override fun hideOpenShiftButton() {
+        button_open_shift.visibility = View.INVISIBLE
+    }
+
+    override fun hideSummaryButton() {
+        button_summary.visibility = View.INVISIBLE
     }
 
     private fun updateDbAndOpenShift() {
@@ -84,21 +106,29 @@ class ShiftActivity : AppCompatActivity() {
         Thread {
             db.removeAllClosed()
         }.start()
+        startMainActivity()
+    }
 
+    override fun startMainActivity() {
         startActivity(Intent(this@ShiftActivity, MainActivity::class.java))
         finish()
     }
 
     private fun checkAndEnableButtons() {
         if(!isShiftOpen()) {
-            button_close_shift.visibility = View.INVISIBLE
-            button_summary.visibility = View.INVISIBLE
+            hideSummaryButton()
+            hideCloseShiftButton()
         } else {
-            button_open_shift.visibility = View.INVISIBLE
+            hideOpenShiftButton()
         }
     }
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+    }
+  
+    override fun onDestroy() {
+        presenter.detachView()
+        super.onDestroy()
     }
 }
