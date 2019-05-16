@@ -5,23 +5,55 @@
     android:layout_height="match_parent"
     tools:context="ceg.avtechlabs.standticket.views.PinActivity">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/title_pin_activity"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:text="Enter password to continue .."/>
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginBottom="16dp"
+        android:background="?android:attr/listDivider" />
+
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="45dp"
+        android:layout_below="@+id/title_pin_activity"
         android:inputType="numberPassword"
         android:hint="@string/hint_password"
         android:id="@+id/password"
+        android:background="@drawable/button_shape"
+        android:layout_marginTop="25dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:gravity="center"
+        android:textColorHint="@color/colorPrimary"
         />
 
-    <Button
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="go"
-        android:layout_below="@+id/password"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="10dp"
-        android:background="@color/colorAccent"
         android:textColor="@android:color/white"
-        android:text="@string/positive_button"/>
+        android:text="@string/positive_button"
+        android:layout_marginBottom="30dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/grayA" />
+
+    </RelativeLayout>
 
 </RelativeLayout>

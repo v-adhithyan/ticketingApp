@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="ceg.avtechlabs.standticket.views.MainActivity">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -39,14 +40,19 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="50dp"
                 android:hint="@string/hint_vehicle_no"
-                android:textColorHint="@color/colorAccent"
+                android:textColorHint="@color/colorPrimary"
                 android:textAllCaps="true"
                 android:defaultFocusHighlightEnabled="true"
                 android:focusedByDefault="true"
                 android:inputType="text"
-                android:id="@+id/editTextVehicleNo"/>
+                android:id="@+id/editTextVehicleNo"
+                android:background="@drawable/button_shape"
+                android:layout_marginRight="10dp"
+                android:layout_marginLeft="10dp"
+                android:gravity="center"
+                />
 
             <View
                 android:layout_width="match_parent"
@@ -57,6 +63,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:id="@+id/dateTimeView"/>
 
         </LinearLayout>
@@ -77,7 +84,9 @@
         android:text="@string/button_print_ticket"
         android:background="@color/grayA"
         android:textColor="@android:color/white"
-        android:onClick="generateTicket"/>
+        android:onClick="generateTicket"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <View
         android:layout_width="match_parent"
@@ -93,7 +102,9 @@
         android:text="@string/button_close_ticket"
         android:background="@color/redA"
         android:textColor="@android:color/white"
-        android:onClick="closeTicket"/>
+        android:onClick="closeTicket"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
     <View
         android:layout_width="match_parent"
@@ -109,6 +120,8 @@
         android:text="@string/button_connect_printer"
         android:background="@color/grayA"
         android:textColor="@android:color/white"
-        android:onClick="printerConnect"/>
+        android:onClick="printerConnect"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"/>
 
 </LinearLayout>

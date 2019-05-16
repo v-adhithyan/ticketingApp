@@ -1,5 +1,6 @@
 package ceg.avtechlabs.standticket.views
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.ContextMenu
@@ -14,6 +15,7 @@ import ceg.avtechlabs.standticket.presenters.SearchPresenter
 import ceg.avtechlabs.standticket.utils.createProgressDialog
 import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_search.*
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.util.*
 
 class SearchActivity : AppCompatActivity(), SearchPresenter.View {
@@ -107,5 +109,9 @@ class SearchActivity : AppCompatActivity(), SearchPresenter.View {
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
 }

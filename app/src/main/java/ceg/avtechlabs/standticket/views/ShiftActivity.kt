@@ -1,5 +1,6 @@
 package ceg.avtechlabs.standticket.views
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -10,6 +11,7 @@ import ceg.avtechlabs.standticket.presenters.ShiftPresenter
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_shift.*
 import org.jetbrains.anko.toast
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
     private val presenter:ShiftPresenter = ShiftPresenter()
@@ -121,6 +123,10 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
         }
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+    }
+  
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
