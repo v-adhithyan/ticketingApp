@@ -1,5 +1,6 @@
 package ceg.avtechlabs.standticket.views
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,7 @@ import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.presenters.PinPresenter
 import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_pin.*
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class PinActivity : AppCompatActivity(), PinPresenter.View {
     private val presenter: PinPresenter = PinPresenter()
@@ -41,5 +43,9 @@ class PinActivity : AppCompatActivity(), PinPresenter.View {
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
 }

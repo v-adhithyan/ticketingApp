@@ -11,6 +11,7 @@ import ceg.avtechlabs.standticket.utils.createProgressDialog
 import ceg.avtechlabs.standticket.utils.showLongToast
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import kotlinx.android.synthetic.main.activity_close_ticket.*
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadListener {
 
@@ -50,5 +51,9 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
                 context.showLongToast(context.getString(R.string.ticket_closed_successfully))
             }
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
 }

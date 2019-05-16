@@ -1,5 +1,6 @@
 package ceg.avtechlabs.standticket.views
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -9,6 +10,7 @@ import ceg.avtechlabs.standticket.models.DbHelper
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_shift.*
 import org.jetbrains.anko.toast
+import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
 class ShiftActivity : AppCompatActivity() {
 
@@ -94,5 +96,9 @@ class ShiftActivity : AppCompatActivity() {
         } else {
             button_open_shift.visibility = View.INVISIBLE
         }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
 }
