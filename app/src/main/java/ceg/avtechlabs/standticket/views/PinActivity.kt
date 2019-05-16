@@ -3,6 +3,7 @@ package ceg.avtechlabs.standticket.views
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Gravity
 import android.view.View
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.presenters.PinPresenter

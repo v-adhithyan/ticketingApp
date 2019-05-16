@@ -58,9 +58,9 @@
 
     <string name="hint_password">Password</string>
 
-    <string name="button_open">Open</string>
-    <string name="button_close">Close</string>
-    <string name="button_summary">Summary</string>
+    <string name="button_open">Open Shift</string>
+    <string name="button_close">Close Shift</string>
+    <string name="button_summary">Shift Summary</string>
 
     <string name="button_manage">Manage</string>
 </resources>
