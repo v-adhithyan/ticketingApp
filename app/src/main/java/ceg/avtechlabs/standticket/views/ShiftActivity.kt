@@ -24,6 +24,7 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
 
         presenter.attachView(this)
         checkAndEnableButtons()
+        displayActivityLog()
     }
 
     override fun open() {
@@ -80,6 +81,7 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
         toast(getString(R.string.shift_closed))
         closeShift()
         hideCloseShiftButton()
+        showOpenShiftButton()
     }
 
     override fun hideCloseShiftButton() {
@@ -88,6 +90,10 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
 
     override fun hideOpenShiftButton() {
         button_open_shift.visibility = View.INVISIBLE
+    }
+
+    fun showOpenShiftButton() {
+        button_open_shift.visibility = View.VISIBLE
     }
 
     override fun hideSummaryButton() {
@@ -130,5 +136,10 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
     override fun onDestroy() {
         presenter.detachView()
         super.onDestroy()
+    }
+
+    fun displayActivityLog() {
+        val clearDataAttempts = "${getString(R.string.attempts_to_clear_data)}: ${getLogManageSpace()}"
+        textview_activity_log.text = clearDataAttempts
     }
 }

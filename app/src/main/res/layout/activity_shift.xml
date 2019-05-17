@@ -8,6 +8,16 @@
     tools:showIn="@layout/activity_shift"
     >
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="10pt"
+        android:layout_above="@id/button_open_shift"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/textview_activity_log"
+        />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

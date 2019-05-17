@@ -47,4 +47,17 @@ class TestExtensions {
 
         assertEquals(getDateTime(millis, false), "19/01/1970 06:07:35")
     }
+
+    @Test
+    fun testGetSetLogManageSpace() {
+        assertEquals(0, context.getLogManageSpace())
+
+        context.logManageSpace()
+        assertEquals(1, context.getLogManageSpace())
+
+        for(i in 1..10) {
+            context.logManageSpace()
+        }
+        assertEquals(11, context.getLogManageSpace())
+    }
 }

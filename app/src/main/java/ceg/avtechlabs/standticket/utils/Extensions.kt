@@ -64,6 +64,19 @@ fun Context.isShiftClosed(): Boolean {
     return preference.getBoolean("close", false)
 }
 
+fun Context.getLogManageSpace(): Int {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    return preference.getInt("tried_to_clear_data", 0)
+}
+
+fun Context.logManageSpace() {
+    val count = this.getLogManageSpace()
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    val editor = preference.edit()
+    editor.putInt("tried_to_clear_data", count + 1)
+    editor.commit()
+}
+
 fun Context.showLongToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 }

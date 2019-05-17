@@ -63,4 +63,7 @@
     <string name="button_summary">Shift Summary</string>
 
     <string name="button_manage">Manage</string>
+
+    <string name="text_operation_not_permitted">Operation is not permitted.</string>
+    <string name="attempts_to_clear_data">Attempts to clear data</string>
 </resources>

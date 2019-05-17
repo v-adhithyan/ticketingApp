@@ -63,5 +63,8 @@
     <string name="button_summary">இன்றைய நிலை</string>
 
     <string name="button_manage">மேலாண்மை</string>
+
+    <string name="text_operation_not_permitted">இதற்கு அனுமதி இல்லை.</string>
+    <string name="attempts_to_clear_data">தரவுகளை அழிக்க செய்யப்பட்ட முயற்சிகள்</string>
 </resources>
 
