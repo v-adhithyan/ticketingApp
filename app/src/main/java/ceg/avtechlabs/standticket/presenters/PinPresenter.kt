@@ -9,11 +9,13 @@ open class PinPresenter: BasePresenter<PinPresenter.View>() {
             view?.startShiftActivity()
         } else {
             view?.notifyWrongPassword()
+            view?.recordIncorrectPasswordAttempt()
         }
     }
 
     interface View {
         fun startShiftActivity()
         fun notifyWrongPassword()
+        fun recordIncorrectPasswordAttempt()
     }
 }

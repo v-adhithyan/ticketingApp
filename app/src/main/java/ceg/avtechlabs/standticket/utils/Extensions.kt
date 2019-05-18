@@ -77,6 +77,19 @@ fun Context.logManageSpace() {
     editor.commit()
 }
 
+fun Context.getIncorrectPasswordAttempt(): Int {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    return preference.getInt("incorrect_password_attempt", 0)
+}
+
+fun Context.logIncorrectPasswordAttempt() {
+    val count = this.getIncorrectPasswordAttempt()
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    val editor = preference.edit()
+    editor.putInt("incorrect_password_attempt", count + 1)
+    editor.commit()
+}
+
 fun Context.showLongToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 }

@@ -32,6 +32,7 @@ class TestPin {
     fun test_wrong_password_shows_error_message() {
         presenter.processPin(PASSWORD.reversed())
         verify(view).notifyWrongPassword()
+        verify(view).recordIncorrectPasswordAttempt()
         verify(view, never()).startShiftActivity()
     }
 }

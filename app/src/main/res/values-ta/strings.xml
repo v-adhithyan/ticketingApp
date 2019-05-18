@@ -66,5 +66,6 @@
 
     <string name="text_operation_not_permitted">இதற்கு அனுமதி இல்லை.</string>
     <string name="attempts_to_clear_data">தரவுகளை அழிக்க செய்யப்பட்ட முயற்சிகள்</string>
+    <string name="wrong_password_attempts">கடவுச் சொல் தவறாக உள்ளீடு செய்யப்பட்ட எண்ணிக்கை </string>
 </resources>
 

@@ -139,7 +139,8 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
     }
 
     fun displayActivityLog() {
-        val clearDataAttempts = "${getString(R.string.attempts_to_clear_data)}: ${getLogManageSpace()}"
-        textview_activity_log.text = clearDataAttempts
+        val clearDataAttempts = "${getString(R.string.attempts_to_clear_data)}: ${getLogManageSpace()}\n"
+        val wrongPasswordAttempts = "${getString(R.string.wrong_password_attempts)}: ${getIncorrectPasswordAttempt()}"
+        textview_activity_log.text = clearDataAttempts + wrongPasswordAttempts
     }
 }

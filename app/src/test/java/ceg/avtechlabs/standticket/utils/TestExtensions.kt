@@ -60,4 +60,17 @@ class TestExtensions {
         }
         assertEquals(11, context.getLogManageSpace())
     }
+
+    @Test
+    fun testGetLogIncorrectPasswordAttempt() {
+        assertEquals(0, context.getIncorrectPasswordAttempt())
+
+        context.logIncorrectPasswordAttempt()
+        assertEquals(1, context.getIncorrectPasswordAttempt())
+
+        for(i in 1..10) {
+            context.logIncorrectPasswordAttempt()
+        }
+        assertEquals(11, context.getIncorrectPasswordAttempt())
+    }
 }

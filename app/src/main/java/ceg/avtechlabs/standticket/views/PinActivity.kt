@@ -8,6 +8,7 @@ import android.view.Gravity
 import android.view.View
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.presenters.PinPresenter
+import ceg.avtechlabs.standticket.utils.logIncorrectPasswordAttempt
 import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_pin.*
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
@@ -47,5 +48,9 @@ class PinActivity : AppCompatActivity(), PinPresenter.View {
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+    }
+
+    override fun recordIncorrectPasswordAttempt() {
+        logIncorrectPasswordAttempt()
     }
 }
