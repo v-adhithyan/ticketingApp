@@ -5,9 +5,12 @@ import android.content.Context
 import android.content.DialogInterface
 import android.graphics.Bitmap
 import android.preference.PreferenceManager
+import android.text.InputType
+import android.widget.EditText
 import android.widget.Toast
 import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
+import ceg.avtechlabs.standticket.utils.Constants.PASSWORD
 import dmax.dialog.SpotsDialog
 import java.text.SimpleDateFormat
 import java.util.*
@@ -87,6 +90,18 @@ fun Context.logIncorrectPasswordAttempt() {
     val preference = PreferenceManager.getDefaultSharedPreferences(this)
     val editor = preference.edit()
     editor.putInt("incorrect_password_attempt", count + 1)
+    editor.commit()
+}
+
+fun Context.getPassword(): String {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    return preference.getString("password", PASSWORD)
+}
+
+fun Context.setPassword(password: String) {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    val editor = preference.edit()
+    editor.putString("password", password)
     editor.commit()
 }
 

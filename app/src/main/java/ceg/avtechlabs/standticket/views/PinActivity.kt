@@ -4,10 +4,10 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.Gravity
 import android.view.View
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.presenters.PinPresenter
+import ceg.avtechlabs.standticket.utils.getPassword
 import ceg.avtechlabs.standticket.utils.logIncorrectPasswordAttempt
 import ceg.avtechlabs.standticket.utils.showLongToast
 import kotlinx.android.synthetic.main.activity_pin.*
@@ -24,7 +24,7 @@ class PinActivity : AppCompatActivity(), PinPresenter.View {
     }
 
     fun go(v: View) {
-       presenter.processPin(password.text.toString())
+       presenter.processPin(password.text.toString(), getPassword())
     }
 
     override fun onBackPressed() {
@@ -33,7 +33,7 @@ class PinActivity : AppCompatActivity(), PinPresenter.View {
     }
 
     override fun startShiftActivity() {
-        startActivity(Intent(this, ShiftActivity::class.java))
+        startActivity(Intent(this, ManageActivity::class.java))
         finish()
     }
 

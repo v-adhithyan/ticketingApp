@@ -67,4 +67,8 @@
     <string name="text_operation_not_permitted">Operation is not permitted.</string>
     <string name="attempts_to_clear_data">Attempts to clear data</string>
     <string name="wrong_password_attempts">No of incorrect password attempts</string>
+
+    <string name="menu_change_password">Change password</string>
+    <string name="password_constraints_not_met">Password should be only 4 characters.</string>
+    <string name="password_change_success">Password changed successfully.</string>
 </resources>

@@ -67,5 +67,9 @@
     <string name="text_operation_not_permitted">இதற்கு அனுமதி இல்லை.</string>
     <string name="attempts_to_clear_data">தரவுகளை அழிக்க செய்யப்பட்ட முயற்சிகள்</string>
     <string name="wrong_password_attempts">கடவுச் சொல் தவறாக உள்ளீடு செய்யப்பட்ட எண்ணிக்கை </string>
+
+    <string name="menu_change_password">கடவுச்சொல்லை மாற்றவும்</string>
+    <string name="password_constraints_not_met">கடவுச்சொல்லில் மொத்தம் நான்கு எண்கள் மட்டுமே இருக்க வேண்டும்.</string>
+    <string name="password_change_success">கடவுச் சொல் மாற்றப்பட்டது.</string>
 </resources>
 

@@ -23,14 +23,14 @@ class TestPin {
 
     @Test
     fun test_correct_password_opens_shift_activity() {
-        presenter.processPin(PASSWORD)
+        presenter.processPin(PASSWORD, PASSWORD)
         verify(view).startShiftActivity()
         verify(view, never()).notifyWrongPassword()
     }
 
     @Test
     fun test_wrong_password_shows_error_message() {
-        presenter.processPin(PASSWORD.reversed())
+        presenter.processPin(PASSWORD.reversed(), PASSWORD)
         verify(view).notifyWrongPassword()
         verify(view).recordIncorrectPasswordAttempt()
         verify(view, never()).startShiftActivity()

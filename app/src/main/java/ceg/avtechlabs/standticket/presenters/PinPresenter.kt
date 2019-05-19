@@ -4,8 +4,8 @@ import ceg.avtechlabs.standticket.utils.Constants.PASSWORD
 
 open class PinPresenter: BasePresenter<PinPresenter.View>() {
 
-    fun processPin(pin: String) {
-        if(pin.equals(PASSWORD)) {
+    fun processPin(pin: String, correctPassword: String) {
+        if(pin.equals(correctPassword)) {
             view?.startShiftActivity()
         } else {
             view?.notifyWrongPassword()

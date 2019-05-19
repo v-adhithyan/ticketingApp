@@ -43,7 +43,7 @@
             android:name=".views.SearchActivity"
             android:label="@string/title_activity_search" />
         <activity
-            android:name=".views.ShiftActivity"
+            android:name=".views.ManageActivity"
             android:label="@string/title_activity_shift" />
     </application>
 

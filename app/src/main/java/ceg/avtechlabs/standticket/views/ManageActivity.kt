@@ -4,17 +4,19 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.models.DbHelper
-import ceg.avtechlabs.standticket.presenters.ShiftPresenter
+import ceg.avtechlabs.standticket.presenters.ManagePresenter
 import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_shift.*
 import org.jetbrains.anko.toast
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 
-class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
-    private val presenter:ShiftPresenter = ShiftPresenter()
+class ManageActivity : AppCompatActivity(), ManagePresenter.View {
+    private val presenter:ManagePresenter = ManagePresenter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +77,7 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
     }
 
     private fun updateDbAndCloseShift() {
-        val db = DbHelper(this@ShiftActivity)
+        val db = DbHelper(this@ManageActivity)
         db.updateClose(System.currentTimeMillis().toString())
         db.close()
         toast(getString(R.string.shift_closed))
@@ -116,7 +118,7 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
     }
 
     override fun startMainActivity() {
-        startActivity(Intent(this@ShiftActivity, MainActivity::class.java))
+        startActivity(Intent(this@ManageActivity, MainActivity::class.java))
         finish()
     }
 
@@ -142,5 +144,32 @@ class ShiftActivity : AppCompatActivity(), ShiftPresenter.View {
         val clearDataAttempts = "${getString(R.string.attempts_to_clear_data)}: ${getLogManageSpace()}\n"
         val wrongPasswordAttempts = "${getString(R.string.wrong_password_attempts)}: ${getIncorrectPasswordAttempt()}"
         textview_activity_log.text = clearDataAttempts + wrongPasswordAttempts
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_manage, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_change_password -> {
+                presenter.showPasswordChangeDialog(this, getString(R.string.menu_change_password), getString(R.string.positive_button), getString(R.string.no))
+            }
+
+            else -> {
+                return super.onOptionsItemSelected(item)
+            }
+        }
+        return true
+    }
+
+    override fun changePassword(password: String) {
+        if(password.length != 4) {
+            showLongToast(getString(R.string.password_constraints_not_met))
+        } else {
+            setPassword(password)
+            showLongToast(getString(R.string.password_change_success))
+        }
     }
 }

@@ -1,7 +1,6 @@
 package ceg.avtechlabs.standticket.views
 
-import ceg.avtechlabs.standticket.presenters.PinPresenter
-import ceg.avtechlabs.standticket.presenters.ShiftPresenter
+import ceg.avtechlabs.standticket.presenters.ManagePresenter
 import com.nhaarman.mockito_kotlin.mock
 import com.nhaarman.mockito_kotlin.never
 import com.nhaarman.mockito_kotlin.verify
@@ -9,12 +8,12 @@ import org.junit.Before
 import org.junit.Test
 
 class TestShift {
-    private lateinit var presenter: ShiftPresenter
-    private lateinit var view: ShiftPresenter.View
+    private lateinit var presenter: ManagePresenter
+    private lateinit var view: ManagePresenter.View
 
     @Before
     fun setup() {
-        presenter = ShiftPresenter()
+        presenter = ManagePresenter()
         view = mock()
         presenter.attachView(view)
     }
@@ -43,5 +42,10 @@ class TestShift {
         presenter.showSummary(true)
         verify(view, never()).showToastToCloseShiftForViewingSummary()
         verify(view).showSummaryDetails()
+    }
+
+    @Test
+    fun test_change_password() {
+
     }
 }

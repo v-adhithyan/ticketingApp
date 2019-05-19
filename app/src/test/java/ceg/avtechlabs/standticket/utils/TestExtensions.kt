@@ -2,6 +2,7 @@ package ceg.avtechlabs.standticket.utils
 
 import android.content.Context
 import androidx.test.core.app.ApplicationProvider
+import ceg.avtechlabs.standticket.utils.Constants.PASSWORD
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Before
@@ -72,5 +73,13 @@ class TestExtensions {
             context.logIncorrectPasswordAttempt()
         }
         assertEquals(11, context.getIncorrectPasswordAttempt())
+    }
+
+    @Test
+    fun testGetSetPassword() {
+        assertEquals(PASSWORD, context.getPassword())
+
+        context.setPassword("1234")
+        assertEquals("1234", context.getPassword())
     }
 }
