@@ -1,5 +1,6 @@
 package ceg.avtechlabs.standticket.views
 
+import android.app.AlertDialog
 import android.content.Context
 import android.graphics.PointF
 import android.os.Bundle
@@ -8,6 +9,8 @@ import android.support.v7.app.AppCompatActivity
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.models.DbHelper
 import ceg.avtechlabs.standticket.utils.createProgressDialog
+import ceg.avtechlabs.standticket.utils.formatVehicle
+import ceg.avtechlabs.standticket.utils.getDateTime
 import ceg.avtechlabs.standticket.utils.showLongToast
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import kotlinx.android.synthetic.main.activity_close_ticket.*
@@ -20,8 +23,10 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
         vibrator.vibrate(1000)
 
-        closeTicket(text, this@CloseTicketActivity, false, 0)
-        finish()
+        val token = text.replace("Adhi", "")
+        val details = DbHelper(this).getTokenDetails(token)
+        val message = "${formatVehicle(details!!)}${getDateTime(details!!)}"
+        showTicketDetails(message, token)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,8 +40,7 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
     }
 
     companion object {
-        fun closeTicket(tokenText: String, context: Context, id: Boolean, idVal: Int) {
-            val token = tokenText.replace("Adhi", "")
+        fun closeTicket(token: String, context: Context, id: Boolean, idVal: Int) {
             val progressBar = context.createProgressDialog(context.getString(R.string.closing_ticket))
             progressBar.show()
 
@@ -55,5 +59,18 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
 
     override fun attachBaseContext(newBase: Context) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
+    }
+
+    fun showTicketDetails(message: String, token: String) {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(getString(R.string.ticket_details))
+        builder.setMessage(message)
+        builder.setPositiveButton(getString(R.string.positive_button), {dialog, i ->
+            closeTicket(token, this@CloseTicketActivity, false, 0)
+            finish()
+        })
+        builder.setCancelable(false)
+        builder.create()
+        builder.show()
     }
 }

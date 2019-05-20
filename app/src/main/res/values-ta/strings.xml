@@ -71,5 +71,7 @@
     <string name="menu_change_password">கடவுச்சொல்லை மாற்றவும்</string>
     <string name="password_constraints_not_met">கடவுச்சொல்லில் மொத்தம் நான்கு எண்கள் மட்டுமே இருக்க வேண்டும்.</string>
     <string name="password_change_success">கடவுச் சொல் மாற்றப்பட்டது.</string>
+
+    <string name="ticket_details">டிக்கெட் விவரங்கள்</string>
 </resources>
 

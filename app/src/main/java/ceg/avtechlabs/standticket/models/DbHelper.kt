@@ -179,4 +179,16 @@ open class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAM
         return results
     }
 
+    fun getTokenDetails(token: String): Stand? {
+        val sql = "SELECT * FROM $TABLE_VEHICLES WHERE $TOKEN_NO=${token.toLong()}"
+        val db = this.readableDatabase
+        val result = db.rawQuery(sql, null)
+
+        if(result == null) {
+            return null
+        }
+
+        result.moveToFirst()
+        return Stand(result.getInt(0), result.getInt(1), result.getString(2), result.getString(3), result.getInt(4))
+    }
 }

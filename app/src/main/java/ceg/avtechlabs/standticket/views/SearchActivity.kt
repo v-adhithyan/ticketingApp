@@ -12,8 +12,7 @@ import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.models.DbHelper
 import ceg.avtechlabs.standticket.models.Stand
 import ceg.avtechlabs.standticket.presenters.SearchPresenter
-import ceg.avtechlabs.standticket.utils.createProgressDialog
-import ceg.avtechlabs.standticket.utils.showLongToast
+import ceg.avtechlabs.standticket.utils.*
 import kotlinx.android.synthetic.main.activity_search.*
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.util.*
@@ -47,19 +46,6 @@ class SearchActivity : AppCompatActivity(), SearchPresenter.View {
     fun setAdapter(results: Array<String>) {
         list_search.invalidate()
         list_search.adapter = ArrayAdapter<String>(this,  android.R.layout.simple_list_item_1,  results)
-    }
-
-    private fun formatVehicle(result: Stand): String {
-        return "${getString(R.string.vehicle_no)}:\t${result.vehicleNo}\n"
-    }
-
-    private fun getDateTime(result: Stand): String {
-        return "${getString(R.string.date_and_time)}:\t${result.dateTime}\n"
-    }
-
-    private fun isInStand(result: Stand): String {
-        val takenMap = mapOf<Int, String>(0 to getString(R.string.yes), 1 to getString(R.string.no))
-        return "${getString(R.string.is_in_stand)}:\t${takenMap.get(result.taken)}"
     }
 
     private fun populateDetails(results: LinkedList<Stand>): Array<String> {

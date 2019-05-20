@@ -71,4 +71,6 @@
     <string name="menu_change_password">Change password</string>
     <string name="password_constraints_not_met">Password should be only 4 characters.</string>
     <string name="password_change_success">Password changed successfully.</string>
+
+    <string name="ticket_details">Ticket details</string>
 </resources>
