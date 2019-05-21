@@ -73,5 +73,6 @@
     <string name="password_change_success">கடவுச் சொல் மாற்றப்பட்டது.</string>
 
     <string name="ticket_details">டிக்கெட் விவரங்கள்</string>
+    <string name="overstay">வண்டி %d நாட்கள் அதிகமாக நின்றுள்ளது.</string>
 </resources>
 

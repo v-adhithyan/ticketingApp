@@ -8,10 +8,7 @@ import android.os.Vibrator
 import android.support.v7.app.AppCompatActivity
 import ceg.avtechlabs.standticket.R
 import ceg.avtechlabs.standticket.models.DbHelper
-import ceg.avtechlabs.standticket.utils.createProgressDialog
-import ceg.avtechlabs.standticket.utils.formatVehicle
-import ceg.avtechlabs.standticket.utils.getDateTime
-import ceg.avtechlabs.standticket.utils.showLongToast
+import ceg.avtechlabs.standticket.utils.*
 import com.dlazaro66.qrcodereaderview.QRCodeReaderView
 import kotlinx.android.synthetic.main.activity_close_ticket.*
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
@@ -25,7 +22,8 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
 
         val token = text.replace("Adhi", "")
         val details = DbHelper(this).getTokenDetails(token)
-        val message = "${formatVehicle(details!!)}${getDateTime(details!!)}"
+        val overstay = getPaymentDue(token.toLong())
+        val message = "${formatVehicle(details!!)}${getDateTime(details!!)}$overstay"
         showTicketDetails(message, token)
     }
 

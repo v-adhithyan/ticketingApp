@@ -73,4 +73,5 @@
     <string name="password_change_success">Password changed successfully.</string>
 
     <string name="ticket_details">Ticket details</string>
+    <string name="overstay">Overstay: Extra %d day(s) in stand.</string>
 </resources>
