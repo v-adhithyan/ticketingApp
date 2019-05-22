@@ -49,7 +49,7 @@
     <string name="shift_opened">Shift opened</string>
     <string name="confirm_close_shift_now">Do you want to close the shift?</string>
     <string name="shift_closed">Shift closed</string>
-    <string name="close_shift_to_view_summary">Close shift to view summary</string>
+    <string name="close_shift_to_view_summary">Close shift and try again.</string>
 
     <string name="hint_vehicle_no">Registration number</string>
     <string name="button_print_ticket">Print Ticket</string>
@@ -74,4 +74,6 @@
 
     <string name="ticket_details">Ticket details</string>
     <string name="overstay">Overstay: Extra %d day(s) in stand.</string>
+
+    <string name="menu_backup_data">Backup data</string>
 </resources>

@@ -12,6 +12,8 @@ import androidmads.library.qrgenearator.QRGContents
 import androidmads.library.qrgenearator.QRGEncoder
 import ceg.avtechlabs.standticket.utils.Constants.PASSWORD
 import dmax.dialog.SpotsDialog
+import java.io.IOException
+import java.io.OutputStreamWriter
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,6 +38,13 @@ fun getDateTime(millis: Long, utc: Boolean): String {
     if(utc) {
         formatter.timeZone = TimeZone.getTimeZone("UTC")
     }
+    val calendar = Calendar.getInstance()
+    calendar.timeInMillis = millis
+    return formatter.format(calendar.time)
+}
+
+fun getDate(millis: Long): String {
+    val formatter = SimpleDateFormat("dd-MM-yyyy")
     val calendar = Calendar.getInstance()
     calendar.timeInMillis = millis
     return formatter.format(calendar.time)
@@ -140,4 +149,17 @@ fun Context.showAlertDialog(title:String, message: String, positiveButtonText: S
             .setNegativeButton(negativeButtonText, cancelAction)
             .create()
     alert.show()
+}
+
+
+fun Context.writeCsv(data: String){
+    val filename = "${getDate(System.currentTimeMillis())}.csv"
+    try {
+        val outstream = OutputStreamWriter(openFileOutput(filename, Context.MODE_PRIVATE))
+        outstream.write(data)
+        outstream.close()
+        showLongToast("Data backed up to $filename")
+    } catch (exception: IOException) {
+        showLongToast("Backup failed.")
+    }
 }

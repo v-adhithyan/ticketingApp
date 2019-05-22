@@ -191,4 +191,27 @@ open class DbHelper(context: Context) : SQLiteOpenHelper(context, DBModel.DB_NAM
         result.moveToFirst()
         return Stand(result.getInt(0), result.getInt(1), result.getString(2), result.getString(3), result.getInt(4))
     }
+
+    fun getShiftData(): String {
+        val sql = "SELECT * from $TABLE_VEHICLES where $TOKEN_NO between ${getOpen()} and  ${getClose()}"
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(sql, null)
+
+        if(cursor == null)
+            return "No data"
+
+        if(cursor.count <= 0)
+            return "No data"
+
+        cursor.moveToFirst()
+        var i = 1;
+        val sb = StringBuilder()
+        sb.append("No., Vehicle No, Date and time\n")
+        do {
+            sb.append("$i, ${cursor.getString(2)}, ${cursor.getString(3)}\n")
+            i += 1
+        } while(cursor.moveToNext())
+
+        return sb.toString()
+    }
 }

@@ -157,6 +157,14 @@ class ManageActivity : AppCompatActivity(), ManagePresenter.View {
                 presenter.showPasswordChangeDialog(this, getString(R.string.menu_change_password), getString(R.string.positive_button), getString(R.string.no))
             }
 
+            R.id.menu_backup -> {
+                if(!isShiftClosed()) {
+                    showLongToast(getString(R.string.close_shift_to_view_summary))
+                } else {
+                    backup()
+                }
+            }
+
             else -> {
                 return super.onOptionsItemSelected(item)
             }

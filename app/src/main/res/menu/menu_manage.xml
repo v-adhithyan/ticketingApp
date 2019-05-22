@@ -8,4 +8,10 @@
         app:showAsAction="never"
         android:title="@string/menu_change_password"/>
 
+    <item
+        android:id="@+id/menu_backup"
+        android:orderInCategory="100"
+        app:showAsAction="never"
+        android:title="@string/menu_backup_data"/>
+
 </menu>

@@ -74,5 +74,6 @@
 
     <string name="ticket_details">டிக்கெட் விவரங்கள்</string>
     <string name="overstay">வண்டி %d நாட்கள் அதிகமாக நின்றுள்ளது.</string>
+    <string name="backup_data">தரவை நகலெடு</string>
 </resources>
 
