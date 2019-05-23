@@ -23,6 +23,9 @@ class CloseTicketActivity : AppCompatActivity(), QRCodeReaderView.OnQRCodeReadLi
         val token = text.replace("Adhi", "")
         val details = DbHelper(this).getTokenDetails(token)
         val overstay = getPaymentDue(token.toLong())
+        if(!overstay.equals("")) {
+            this.addOverstay()
+        }
         val message = "${formatVehicle(details!!)}${getDateTime(details!!)}$overstay"
         showTicketDetails(message, token)
     }

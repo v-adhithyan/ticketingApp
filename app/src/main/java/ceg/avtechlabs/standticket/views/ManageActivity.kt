@@ -64,7 +64,7 @@ class ManageActivity : AppCompatActivity(), ManagePresenter.View {
     override fun showSummaryDetails() {
         val db = DbHelper(this)
         val count = db.summary()
-        toast("${count.toString()} tokens issued.")
+        toast("${count.toString()} tokens issued.\n Overstay: ${getOverstay()} tokens")
         button_open_shift.visibility = View.VISIBLE
     }
 
@@ -110,6 +110,7 @@ class ManageActivity : AppCompatActivity(), ManagePresenter.View {
         showLongToast(getString(R.string.shift_opened))
 
         openShift()
+        this.clearOverstay()
 
         Thread {
             db.removeAllClosed()

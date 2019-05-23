@@ -82,4 +82,20 @@ class TestExtensions {
         context.setPassword("1234")
         assertEquals("1234", context.getPassword())
     }
+
+    @Test
+    fun testGetSetOverstay() {
+        assertEquals(0, context.getOverstay())
+
+        context.addOverstay()
+        assertEquals(1, context.getOverstay())
+
+        for(i in 1..10) {
+            context.addOverstay()
+        }
+        assertEquals(11, context.getOverstay())
+
+        context.clearOverstay()
+        assertEquals(0, context.getOverstay())
+    }
 }

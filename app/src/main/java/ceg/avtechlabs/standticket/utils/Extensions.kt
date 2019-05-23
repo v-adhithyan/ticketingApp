@@ -114,6 +114,26 @@ fun Context.setPassword(password: String) {
     editor.commit()
 }
 
+fun Context.addOverstay() {
+    val count = this.getOverstay()
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    val editor = preference.edit()
+    editor.putInt("overstay", count + 1)
+    editor.commit()
+}
+
+fun Context.getOverstay(): Int {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    return preference.getInt("overstay", 0)
+}
+
+fun Context.clearOverstay() {
+    val preference = PreferenceManager.getDefaultSharedPreferences(this)
+    val editor = preference.edit()
+    editor.putInt("overstay", 0)
+    editor.commit()
+}
+
 fun Context.showLongToast(text: String) {
     Toast.makeText(this, text, Toast.LENGTH_LONG).show()
 }
