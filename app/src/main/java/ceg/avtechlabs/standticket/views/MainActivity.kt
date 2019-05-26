@@ -33,6 +33,7 @@ import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
+import java.nio.charset.Charset
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -80,11 +81,16 @@ class MainActivity : AppCompatActivity() {
         progress.show()
 
         doAsync {
-            val standName = "POLLACHI MUNICIPALITY\nTWO WHEELER PARKING\n"
-            val address = "(Behind Nachimuthu nursing home)\n"
+            val standName = "\nTWO WHEELER PARKING\n"
+            val address = "(Pollachi old busstand backside)\n"
             val tokenNo = "TOKEN: $millis\n"
             val vechicleNo = "Vehicle Number: ${editTextVehicleNo.text.toString()}\n"
             val dateTime = "TIME: ${getDateTime(millis, utc = false)}\n"
+            /*val standName = "\nஇரு சக்கர வாகன நிறுத்தம்\n"
+            val address = "(பொள்ளாச்சி பழைய பஸ் ஸ்டாண்ட் பின்புறம்)\n"
+            val tokenNo = "டோக்கன் எண்: $millis\n"
+            val vechicleNo = "வண்டி எண்: ${editTextVehicleNo.text.toString()}\n"
+            val dateTime = "தேதி மற்றும் நேரம்: ${getDateTime(millis, utc = false)}\\n"*/
             val header = "$standName$address"
             val ticketString = "$tokenNo$vechicleNo$dateTime"
 
